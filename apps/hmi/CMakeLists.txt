@@ -25,6 +25,7 @@ endif()
 # app source
 file(GLOB app_src
   ${CMAKE_SOURCE_DIR}/src/*.cpp
+  ${CMAKE_SOURCE_DIR}/src/test/*.cpp
 )
 
 #
@@ -33,6 +34,10 @@ add_executable($ENV{app_name} ${app_src})
 #
 # INCLUDE
 target_include_directories($ENV{app_name} PUBLIC
+  ${CMAKE_SOURCE_DIR}/src
+  ${CMAKE_SOURCE_DIR}/src/test
+
+  #
   $ENV{dev_root}/engine.core/src/engine
   $ENV{dev_root}/engine.core/src/engine/components
 

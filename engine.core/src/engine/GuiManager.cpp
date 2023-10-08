@@ -355,7 +355,7 @@ void renderComponent( Component* component )
     ImGui::AlignFirstTextHeightToWidgets();
 
     ImGui::PushStyleColor( ImGuiCol_Text, ImColor( 1.0f, 0.78f, 0.58f, 1.0f ) );
-    bool node_open = ImGui::TreeNodeEx( "Component", ImGuiTreeNodeFlags_DefaultOpen, "%s_%u", "component", component );
+    bool node_open = ImGui::TreeNodeEx( "Component", ImGuiTreeNodeFlags_DefaultOpen, "%s:%u", "component", component );
     ImGui::NextColumn();
     ImGui::AlignFirstTextHeightToWidgets();
     ImGui::Text( component->getType() );

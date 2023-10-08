@@ -52,7 +52,7 @@ std::shared_ptr< Entity > MeshLoader::getEntity( void ) const
     return m_entity;
 }
 
-void MeshLoader::loadScene( const aiScene* scene,std::string tag)
+void MeshLoader::loadScene( const aiScene* scene, std::string tag )
 {
     m_entity = std::make_shared< Entity >();
     m_entity->updateTag( tag );

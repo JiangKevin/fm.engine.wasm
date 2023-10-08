@@ -8,7 +8,7 @@ void CoolGame::init( GLManager* glManager )
 {
     // 隐藏原生ui
     auto m_gui = getEngine()->getWindow()->getGuiManager();
-    m_gui->togglePropertyEditor();
+    // m_gui->togglePropertyEditor();
     // 获取输入
     auto input = getEngine()->getWindow()->getInput();
 

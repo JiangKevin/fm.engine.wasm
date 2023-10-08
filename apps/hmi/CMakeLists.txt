@@ -59,10 +59,11 @@ SET(CMAKE_CXX_FLAGS "-s USE_SDL=2 -std=c++14 -O3 -s USE_GLFW=3")
 
 # link flag
 set(CMAKE_EXE_LINKER_FLAGS
-  ${CMAKE_EXE_LINKER_FLAGS} "--preload-file $ENV{dev_root}/apps/hmi/assets@assets --emrun -s TOTAL_MEMORY=2048MB  -s USE_ICU=1 -s USE_ZLIB=1 -s USE_SQLITE3=1 -l GLEW -l idbfs.js -l websocket.js -s USE_SDL=2 -s ALLOW_MEMORY_GROWTH=1  -pthread -s USE_PTHREADS -s FETCH=1 -l embind -s FULL_ES2=1  -s FULL_ES3=1  -s WASM_WORKERS=1 -s USE_GLFW=3"
+  ${CMAKE_EXE_LINKER_FLAGS} "--preload-file $ENV{dev_root}/apps/hmi/assets@assets --emrun -s TOTAL_MEMORY=2048MB  -s USE_ICU=1 -s USE_ZLIB=1 -s USE_SQLITE3=1 -l GLEW -l idbfs.js -l websocket.js -s USE_SDL=2 -s ALLOW_MEMORY_GROWTH=1 -s FETCH=1 -l embind -s FULL_ES2=1  -s FULL_ES3=1  -s USE_GLFW=3"
 )
 add_definitions(-DASSET_DIR="assets/")
 add_definitions(-DEMSCRIPTEN)
+
 # DEFINE
 target_compile_definitions($ENV{app_name} PUBLIC
   EMSCRIPTEN

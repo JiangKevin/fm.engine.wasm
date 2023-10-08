@@ -19,6 +19,7 @@ MeshLoader::MeshLoader( const std::string file )
     if ( MeshLoader::sceneMeshRendererDataCache[ m_fileName ].size() > 0 )
     {
         m_entity = std::make_shared< Entity >();
+        m_entity->updateTag( m_fileName );
         for ( auto meshRenderData : MeshLoader::sceneMeshRendererDataCache[ m_fileName ] )
         {
             m_entity->addComponent< MeshRenderer >( meshRenderData.mesh, meshRenderData.material );

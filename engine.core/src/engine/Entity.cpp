@@ -30,6 +30,13 @@ Entity::~Entity( void )
     }
 }
 
+void Entity::updateTag( const std::string tag )
+{
+    Entity::setTag( this, tag );
+
+    m_tag = tag;
+}
+
 void Entity::setTag( Entity* entity, const std::string& tag )
 {
     Entity::taggedEntities[ tag ].push_back( entity );

@@ -8,7 +8,7 @@ void testGame::init( GLManager* glManager )
 {
     // 隐藏原生ui
     auto m_gui = getEngine()->getWindow()->getGuiManager();
-    // m_gui->togglePropertyEditor();
+    m_gui->togglePropertyEditor();
     // 获取输入
     auto input = getEngine()->getWindow()->getInput();
 
@@ -36,7 +36,7 @@ void testGame::init( GLManager* glManager )
     money2.getEntity()->addComponent< FreeMove >();
     money2.getEntity()->addComponent< FreeLook >();
     money2.getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 5 ) ).setScale( glm::vec3( 0.8, 0.8, 0.8 ) );
-    money2.getEntity()->addComponent< SpotLight >( glm::vec3( 1.0f, 1.0f, 1.0f ), 2.8f, 0.7f, std::make_shared< Attenuation >( 0, 0, 0.2 ) );
+    // money2.getEntity()->addComponent< SpotLight >( glm::vec3( 1.0f, 1.0f, 1.0f ), 2.8f, 0.7f, std::make_shared< Attenuation >( 0, 0, 0.2 ) );
     addToScene( money2.getEntity() );
     //
     primary_camera  = money2.getEntity()->getComponent< PerspectiveCamera >();

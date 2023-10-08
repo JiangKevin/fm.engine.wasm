@@ -8,7 +8,9 @@
 		"C_Cpp.default.includePath": [
 			"${workspaceRoot}/apps/hmi/src",
 			"${workspaceRoot}/apps/hmi/src/**",
+			"${workspaceRoot}/engine.core/src/engine",
 			"${workspaceRoot}/engine.core/src/engine/**",
+			"${workspaceRoot}/engine.core/src/engine/components/",
 			"${workspaceRoot}/engine.core/src/engine/components/**",
 			"${workspaceRoot}/engine.core/engine.core/dependencies/assimp/code/**",
 			"${workspaceRoot}/engine.core/engine.core/dependencies/assimp/include/**",

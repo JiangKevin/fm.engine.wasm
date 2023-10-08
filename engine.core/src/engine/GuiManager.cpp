@@ -258,6 +258,9 @@ GuiManager::GuiManager( const glm::vec2& drawableSize, const glm::vec2& displayS
 
     io.DisplaySize             = ImVec2( displaySize.x, displaySize.y );
     io.DisplayFramebufferScale = ImVec2( displaySize.x > 0 ? ( drawableSize.x / displaySize.x ) : 0, displaySize.y > 0 ? ( drawableSize.y / displaySize.y ) : 0 );
+    //
+    width  = displaySize.x;
+    height = displaySize.y;
 }
 
 GuiManager::~GuiManager( void )
@@ -429,8 +432,13 @@ void GuiManager::render( Entity* sceneGraph )
 {
     if ( showProps )
     {
+        ImGuiIO& io = ImGui::GetIO();
+        width       = io.DisplaySize.x;
+        height      = io.DisplaySize.y;
+        // 
         ImGui::SetNextWindowPos( ImVec2( 10, 10 ) );
-        ImGui::SetNextWindowSize( ImVec2( 500, 0 ), ImGuiSetCond_FirstUseEver );
+        // printf( "height= %d \n", height );
+        ImGui::SetNextWindowSize( ImVec2( 500, io.DisplaySize.y - 20 ) );
         if ( ! ImGui::Begin( "Example: Fixed Overlay", nullptr, ImVec2( 0, 0 ), 0.3f, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings ) )
         {
             ImGui::End();

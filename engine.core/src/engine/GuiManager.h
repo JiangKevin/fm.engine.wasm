@@ -30,4 +30,6 @@ private:
     bool showProps;
 
     SDL_Window* m_sdlWindow;
+    //
+    int width, height;
 };

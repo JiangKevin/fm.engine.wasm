@@ -9,7 +9,10 @@
 class BoxCollider : public BaseCollider
 {
 public:
-  BoxCollider(const glm::vec3& size, float mass);
+    BoxCollider( const glm::vec3& size, float mass );
 
-  inline virtual const char *getType(void) { return "BOX_COLLIDER"; };
+    inline virtual const char* getType( void )
+    {
+        return "BOX_COLLIDER";
+    };
 };

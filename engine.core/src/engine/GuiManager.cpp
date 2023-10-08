@@ -241,7 +241,59 @@ GuiManager::GuiManager( const glm::vec2& drawableSize, const glm::vec2& displayS
     io.RenderDrawListsFn  = GuiManager::renderDrawLists;  // Alternatively you can set this to NULL and call ImGui::GetDrawData() after ImGui::Render() to get the same ImDrawData pointer.
     io.SetClipboardTextFn = Window::setClipboardText;
     io.GetClipboardTextFn = Window::getClipboardText;
+    //
 
+    ImGuiStyle* style        = &ImGui::GetStyle();
+    style->WindowMinSize     = ImVec2( 160, 65 );
+    style->FramePadding      = ImVec2( 2, 2 );
+    style->ItemSpacing       = ImVec2( 6, 2 );
+    style->ItemInnerSpacing  = ImVec2( 6, 4 );
+    style->Alpha             = 1.0f;
+    style->WindowRounding    = 0.0f;
+    style->FrameRounding     = 0.0f;
+    style->IndentSpacing     = 6.0f;
+    style->ItemInnerSpacing  = ImVec2( 2, 4 );
+    style->ColumnsMinSpacing = 50.0f;
+    style->GrabMinSize       = 14.0f;
+    style->GrabRounding      = 0.0f;
+    style->ScrollbarSize     = 12.0f;
+    style->ScrollbarRounding = 0.0f;
+    //
+
+    // style->Colors[ ImGuiCol_Text ]                 = ImVec4( 255, 255, 255, 1.00f );
+    // style->Colors[ ImGuiCol_TextDisabled ]         = ImVec4( 255, 255, 255, 0.58f );
+    // style->Colors[ ImGuiCol_WindowBg ]             = ImVec4( 10, 10, 10, 0.70f );
+    // style->Colors[ ImGuiCol_Border ]               = ImVec4( 10, 10, 10, 0.00f );
+    // style->Colors[ ImGuiCol_BorderShadow ]         = ImVec4( 10, 10, 10, 0.00f );
+    style->Colors[ ImGuiCol_FrameBg ] = ImVec4( 0.12, 0.13, 0.16, 1.0f );
+    // style->Colors[ ImGuiCol_FrameBgHovered ]       = ImVec4( 21, 23, 32, 0.78f );
+    // style->Colors[ ImGuiCol_FrameBgActive ]        = ImVec4( 21, 23, 32, 1.00f );
+    // style->Colors[ ImGuiCol_TitleBg ]              = ImVec4( 18, 21, 30, 1.00f );
+    // style->Colors[ ImGuiCol_TitleBgCollapsed ]     = ImVec4( 18, 21, 30, 0.75f );
+    // style->Colors[ ImGuiCol_TitleBgActive ]        = ImVec4( 21, 23, 32, 1.00f );
+    // style->Colors[ ImGuiCol_MenuBarBg ]            = ImVec4( 18, 21, 30, 0.47f );
+    // style->Colors[ ImGuiCol_ScrollbarBg ]          = ImVec4( 18, 21, 30, 1.00f );
+    style->Colors[ ImGuiCol_ScrollbarGrab ] = ImVec4( 1.0, 0.0, 0.5, 0.5f );
+    // style->Colors[ ImGuiCol_ScrollbarGrabHovered ] = ImVec4( 21, 23, 32, 0.78f );
+    // style->Colors[ ImGuiCol_ScrollbarGrabActive ]  = ImVec4( 21, 23, 32, 1.00f );
+    // style->Colors[ ImGuiCol_CheckMark ]            = ImVec4( 21, 23, 32, 0.80f );
+    style->Colors[ ImGuiCol_SliderGrab ] = ImVec4( 1.0, 0.0, 0.5, 1.0f );
+    // style->Colors[ ImGuiCol_SliderGrabActive ]     = ImVec4( 21, 23, 32, 1.00f );
+    // style->Colors[ ImGuiCol_Button ]               = ImVec4( 52, 52, 52, 0.14f );
+    // style->Colors[ ImGuiCol_ButtonHovered ]        = ImVec4( 21, 23, 32, 0.86f );
+    // style->Colors[ ImGuiCol_ButtonActive ]         = ImVec4( 21, 23, 32, 1.00f );
+    // style->Colors[ ImGuiCol_Header ]               = ImVec4( 21, 23, 32, 0.76f );
+    // style->Colors[ ImGuiCol_HeaderHovered ]        = ImVec4( 21, 23, 32, 0.86f );
+    // style->Colors[ ImGuiCol_HeaderActive ]         = ImVec4( 21, 23, 32, 1.00f );
+    // style->Colors[ ImGuiCol_ResizeGrip ]           = ImVec4( 52, 52, 52, 0.04f );
+    // style->Colors[ ImGuiCol_ResizeGripHovered ]    = ImVec4( 21, 23, 32, 0.78f );
+    // style->Colors[ ImGuiCol_ResizeGripActive ]     = ImVec4( 21, 23, 32, 1.00f );
+    // style->Colors[ ImGuiCol_PlotLines ]            = ImVec4( 255, 255, 255, 0.63f );
+    // style->Colors[ ImGuiCol_PlotLinesHovered ]     = ImVec4( 21, 23, 32, 1.00f );
+    // style->Colors[ ImGuiCol_PlotHistogram ]        = ImVec4( 255, 255, 255, 0.63f );
+    // style->Colors[ ImGuiCol_PlotHistogramHovered ] = ImVec4( 21, 23, 32, 1.00f );
+    // style->Colors[ ImGuiCol_TextSelectedBg ]       = ImVec4( 21, 23, 32, 0.43f );
+    // style->Colors[ ImGuiCol_PopupBg ]              = ImVec4( 10, 10, 10, 0.92f );
     // #ifdef _WIN32
     //   SDL_SysWMinfo wmInfo;
     //   SDL_VERSION(&wmInfo.version);
@@ -437,17 +489,13 @@ void GuiManager::render( Entity* sceneGraph )
         height      = io.DisplaySize.y;
         //
         ImGui::SetNextWindowPos( ImVec2( 0, 0 ) );
-        // printf( "height= %d \n", height );
-        // ImGui::SetNextWindowSize( ImVec2( 500, height - 30 ), ImGuiSetCond_Appearing );
-        if ( ! ImGui::Begin( "Example: Fixed Overlay", nullptr, ImVec2( 500, height - 20 ), 0.3f, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings ) )
+
+        if ( ! ImGui::Begin( "Example: Fixed Overlay", nullptr, ImVec2( 500, height - 20 ), 0.8f, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings ) )
         {
             ImGui::End();
             return;
         }
         ImGui::Text( "Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate );
-
-        ImGui::PushStyleVar( ImGuiStyleVar_FramePadding, ImVec2( 2, 2 ) );
-        ImGui::PushStyleVar( ImGuiStyleVar_WindowRounding, 0 );
 
         ImGui::Separator();
         ImGui::Columns( 2 );
@@ -456,11 +504,10 @@ void GuiManager::render( Entity* sceneGraph )
 
         ImGui::Columns( 1 );
         ImGui::Separator();
-        ImGui::PopStyleVar( 2 );
+
         ImGui::End();
 
-        // ImGui::ShowTestWindow();
-
+        ImGui::ShowTestWindow();
         ImGui::Render();
     }
 }

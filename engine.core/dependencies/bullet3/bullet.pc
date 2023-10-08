@@ -1,0 +1,6 @@
+Name: bullet
+Description: Bullet Continuous Collision Detection and Physics Library
+Requires:
+Version: 2.85
+Libs: -L/Users/kevin.jiang/Dev/tools/emsdk/upstream/emscripten/cache/sysroot/lib -lBulletSoftBody -lBulletDynamics -lBulletCollision -lLinearMath
+Cflags:  -I/Users/kevin.jiang/Dev/tools/emsdk/upstream/emscripten/cache/sysroot/include/bullet -I/Users/kevin.jiang/Dev/tools/emsdk/upstream/emscripten/cache/sysroot/include

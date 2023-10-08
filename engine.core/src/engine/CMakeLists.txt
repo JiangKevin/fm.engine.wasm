@@ -25,6 +25,12 @@ IF(ANDROID)
   add_library(engine STATIC ${TARGET_SRC})
 elseif(EMSCRIPTEN)
   add_library(engine STATIC ${TARGET_SRC})
+
+  # DEFINE
+  target_compile_definitions(engine PUBLIC
+    EMSCRIPTEN
+  )
+
 ELSE()
   add_library(engine SHARED ${TARGET_SRC})
 ENDIF()

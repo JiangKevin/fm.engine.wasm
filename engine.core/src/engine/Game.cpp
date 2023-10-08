@@ -7,6 +7,7 @@
 Game::Game( void )
 {
     this->rootScene = std::make_shared< Entity >();
+    this->rootScene->updateTag( "root" );
 }
 
 Game::~Game( void ) {}

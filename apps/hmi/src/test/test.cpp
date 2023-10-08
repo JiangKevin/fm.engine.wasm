@@ -17,26 +17,13 @@ void testGame::init( GLManager* glManager )
     // ground
     {
         auto plane = std::make_shared< Entity >();
+        plane->updateTag( "ground" );
         plane->addComponent< MeshRenderer >( planeMesh, brickMat );
         plane->getTransform().setPosition( glm::vec3( -5, -2, 0 ) ).setScale( glm::vec3( 10, 1, 10 ) );
         plane->addComponent< BoxCollider >( glm::vec3( 5, 0, 5 ), 0 );
 
         addToScene( plane );
     }
-
-    /*{
-      MeshLoader ml("Pregnant.obj");
-      ml.getEntity()->getTransform().setPosition(glm::vec3(0 + (i * 3), -2,
-    -2.5)); ml.getEntity()->addComponent<Sphere>(1); addToScene(ml.getEntity());
-    }*/
-
-    // for ( int i = 0; i < 10; i++ )
-    // {
-    //     MeshLoader ml( "AncientUgandan.obj" );
-    //     ml.getEntity()->getTransform().setPosition( glm::vec3( 0, i * 3, -2.5 ) );
-    //     ml.getEntity()->addComponent< SphereCollider >( 1, 1 );
-    //     addToScene( ml.getEntity() );
-    // }
 
     MeshLoader money( "monkey3.obj" );
     money.getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );

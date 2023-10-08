@@ -250,13 +250,14 @@ GuiManager::GuiManager( const glm::vec2& drawableSize, const glm::vec2& displayS
     style->ItemInnerSpacing  = ImVec2( 6, 4 );
     style->Alpha             = 1.0f;
     style->WindowRounding    = 0.0f;
+    style->WindowPadding     = ImVec2( 0, 8 );
     style->FrameRounding     = 0.0f;
     style->IndentSpacing     = 6.0f;
     style->ItemInnerSpacing  = ImVec2( 2, 4 );
     style->ColumnsMinSpacing = 50.0f;
     style->GrabMinSize       = 14.0f;
     style->GrabRounding      = 0.0f;
-    style->ScrollbarSize     = 12.0f;
+    style->ScrollbarSize     = 6.0f;
     style->ScrollbarRounding = 0.0f;
     //
 
@@ -503,11 +504,11 @@ void GuiManager::render( Entity* sceneGraph )
         renderSceneGraph( sceneGraph );
 
         ImGui::Columns( 1 );
-        ImGui::Separator();
+        // ImGui::Separator();
 
         ImGui::End();
 
-        ImGui::ShowTestWindow();
+        // ImGui::ShowTestWindow();
         ImGui::Render();
     }
 }

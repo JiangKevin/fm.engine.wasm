@@ -3,162 +3,160 @@
 //
 
 #include "Entity.h"
-
 #include "Component.h"
-
 #include <algorithm>
 
-std::map<std::string, std::vector<Entity *>> Entity::taggedEntities;
+std::map< std::string, std::vector< Entity* > > Entity::taggedEntities;
 
-Entity::Entity(const std::string &tag)
+Entity::Entity( const std::string& tag )
 {
-  Entity::setTag(this, tag);
+    Entity::setTag( this, tag );
 
-  m_tag = tag;
-  parentEntity = nullptr;
+    m_tag        = tag;
+    parentEntity = nullptr;
 }
 
-Entity::Entity(void)
+Entity::Entity( void )
 {
-  parentEntity = nullptr;
+    parentEntity = nullptr;
 }
 
-Entity::~Entity(void)
+Entity::~Entity( void )
 {
-  if (!m_tag.empty())
-  {
-    auto taggedEntitiesVec = &Entity::taggedEntities[m_tag];
-    taggedEntitiesVec->erase(std::remove(taggedEntitiesVec->begin(), taggedEntitiesVec->end(), this), taggedEntitiesVec->end());
-  }
+    if ( ! m_tag.empty() )
+    {
+        auto taggedEntitiesVec = &Entity::taggedEntities[ m_tag ];
+        taggedEntitiesVec->erase( std::remove( taggedEntitiesVec->begin(), taggedEntitiesVec->end(), this ), taggedEntitiesVec->end() );
+    }
 }
 
-void Entity::setTag(Entity *entity, const std::string &tag)
+void Entity::setTag( Entity* entity, const std::string& tag )
 {
-  Entity::taggedEntities[tag].push_back(entity);
+    Entity::taggedEntities[ tag ].push_back( entity );
 }
 
-std::vector<Entity *> Entity::findByTag(const std::string &tag)
+std::vector< Entity* > Entity::findByTag( const std::string& tag )
 {
-  return Entity::taggedEntities[tag];
+    return Entity::taggedEntities[ tag ];
 }
 
-void Entity::addChild(std::shared_ptr<Entity> child)
+void Entity::addChild( std::shared_ptr< Entity > child )
 {
-  child->parentEntity = this;
-  children.push_back(child);
+    child->parentEntity = this;
+    children.push_back( child );
 
-  // FIXME: IF MOVING ENTITY TO ANOTHER ENTITY THIS WILL BE AN ISSUE AS WE WILL REREGISTER
-  if (m_engine)
-  {
-    child->registerWithEngineAll(m_engine);
-  }
+    // FIXME: IF MOVING ENTITY TO ANOTHER ENTITY THIS WILL BE AN ISSUE AS WE WILL REREGISTER
+    if ( m_engine )
+    {
+        child->registerWithEngineAll( m_engine );
+    }
 }
 
-void Entity::updateAll(Input *input, std::chrono::microseconds delta)
+void Entity::updateAll( Input* input, std::chrono::microseconds delta )
 {
-  if (parentEntity == nullptr)
-  {
-    worldMatrix = transform.getTransformMatrix();
-  }
-  else
-  {
-    worldMatrix = parentEntity->worldMatrix * transform.getTransformMatrix();
-  }
+    if ( parentEntity == nullptr )
+    {
+        worldMatrix = transform.getTransformMatrix();
+    }
+    else
+    {
+        worldMatrix = parentEntity->worldMatrix * transform.getTransformMatrix();
+    }
 
-  for (auto component : components)
-  {
-    component->update(input, delta);
-  }
+    for ( auto component : components )
+    {
+        component->update( input, delta );
+    }
 
-  for (auto child : children)
-  {
-    child->updateAll(input, delta);
-  }
+    for ( auto child : children )
+    {
+        child->updateAll( input, delta );
+    }
 }
 
-void Entity::renderAll(Shader *shader) const
+void Entity::renderAll( Shader* shader ) const
 {
-  for (auto component : components)
-  {
-    component->render(shader);
-  }
+    for ( auto component : components )
+    {
+        component->render( shader );
+    }
 
-  for (auto child : children)
-  {
-    child->renderAll(shader);
-  }
+    for ( auto child : children )
+    {
+        child->renderAll( shader );
+    }
 }
 
-void Entity::registerWithEngineAll(Engine *engine)
+void Entity::registerWithEngineAll( Engine* engine )
 {
-  m_engine = engine;
+    m_engine = engine;
 
-  for (auto component : components)
-  {
-    component->registerWithEngine(engine);
-  }
+    for ( auto component : components )
+    {
+        component->registerWithEngine( engine );
+    }
 
-  for (auto child : children)
-  {
-    child->registerWithEngineAll(engine);
-  }
+    for ( auto child : children )
+    {
+        child->registerWithEngineAll( engine );
+    }
 }
 
-void Entity::deregisterFromEngineAll(void)
+void Entity::deregisterFromEngineAll( void )
 {
-  for (auto component : components)
-  {
-    component->deregisterFromEngine(m_engine);
-  }
+    for ( auto component : components )
+    {
+        component->deregisterFromEngine( m_engine );
+    }
 
-  for (auto child : children)
-  {
-    child->deregisterFromEngineAll();
-  }
+    for ( auto child : children )
+    {
+        child->deregisterFromEngineAll();
+    }
 
-  m_engine = nullptr;
+    m_engine = nullptr;
 }
 
-Transform &Entity::getTransform(void)
+Transform& Entity::getTransform( void )
 {
-  return transform;
+    return transform;
 }
 
-std::vector<std::shared_ptr<Entity>> Entity::getChildren(void)
+std::vector< std::shared_ptr< Entity > > Entity::getChildren( void )
 {
-  return children;
+    return children;
 }
 
-std::vector<std::shared_ptr<Component>> Entity::getComponents(void)
+std::vector< std::shared_ptr< Component > > Entity::getComponents( void )
 {
-  return components;
+    return components;
 }
 
-glm::mat4 &Entity::getWorldMatrix(void)
+glm::mat4& Entity::getWorldMatrix( void )
 {
-  return worldMatrix;
+    return worldMatrix;
 }
 
-glm::vec3 Entity::getPosition(void)
+glm::vec3 Entity::getPosition( void )
 {
-  if (parentEntity == nullptr)
-  {
-    return transform.getPosition();
-  }
-  else
-  {
-    return (parentEntity->worldMatrix * glm::vec4(transform.getPosition(), 1)).xyz();
-  }
+    if ( parentEntity == nullptr )
+    {
+        return transform.getPosition();
+    }
+    else
+    {
+        return ( parentEntity->worldMatrix * glm::vec4( transform.getPosition(), 1 ) ).xyz();
+    }
 }
 
-glm::vec4 Entity::getDirection(void)
+glm::vec4 Entity::getDirection( void )
 {
-  if (parentEntity == nullptr)
-  {
-    return transform.getDirection();
-  }
-  else
-  {
-    return glm::normalize(parentEntity->worldMatrix * transform.getDirection());
-  }
+    if ( parentEntity == nullptr )
+    {
+        return transform.getDirection();
+    }
+    else
+    {
+        return glm::normalize( parentEntity->worldMatrix * transform.getDirection() );
+    }
 }

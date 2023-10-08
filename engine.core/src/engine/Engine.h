@@ -5,10 +5,8 @@
 #pragma once
 #ifdef ASSET_DIR
     #undef ASSET_DIR
-    #define ASSET_DIR "assets/"
-#elif
-    #define ASSET_DIR "assets/"
 #endif
+#define ASSET_DIR "assets/"
 #include "GLEWManager.h"
 #include "GLManager.h"
 #include "Game.h"

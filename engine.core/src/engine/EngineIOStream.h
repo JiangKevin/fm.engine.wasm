@@ -7,10 +7,8 @@
 #include <fstream>
 #ifdef ASSET_DIR
     #undef ASSET_DIR
-    #define ASSET_DIR "assets/"
-#elif
-    #define ASSET_DIR "assets/"
 #endif
+#define ASSET_DIR "assets/"
 #ifdef ANDROID
     #include "AndroidAssetManager.h"
 #endif

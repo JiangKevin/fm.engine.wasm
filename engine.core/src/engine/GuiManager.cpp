@@ -435,11 +435,11 @@ void GuiManager::render( Entity* sceneGraph )
         ImGuiIO& io = ImGui::GetIO();
         width       = io.DisplaySize.x;
         height      = io.DisplaySize.y;
-        // 
-        ImGui::SetNextWindowPos( ImVec2( 10, 10 ) );
+        //
+        ImGui::SetNextWindowPos( ImVec2( 0, 0 ) );
         // printf( "height= %d \n", height );
-        ImGui::SetNextWindowSize( ImVec2( 500, io.DisplaySize.y - 20 ) );
-        if ( ! ImGui::Begin( "Example: Fixed Overlay", nullptr, ImVec2( 0, 0 ), 0.3f, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings ) )
+        // ImGui::SetNextWindowSize( ImVec2( 500, height - 30 ), ImGuiSetCond_Appearing );
+        if ( ! ImGui::Begin( "Example: Fixed Overlay", nullptr, ImVec2( 500, height - 20 ), 0.3f, ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings ) )
         {
             ImGui::End();
             return;
@@ -447,6 +447,8 @@ void GuiManager::render( Entity* sceneGraph )
         ImGui::Text( "Application average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate );
 
         ImGui::PushStyleVar( ImGuiStyleVar_FramePadding, ImVec2( 2, 2 ) );
+        ImGui::PushStyleVar( ImGuiStyleVar_WindowRounding, 0 );
+
         ImGui::Separator();
         ImGui::Columns( 2 );
 
@@ -454,7 +456,7 @@ void GuiManager::render( Entity* sceneGraph )
 
         ImGui::Columns( 1 );
         ImGui::Separator();
-        ImGui::PopStyleVar();
+        ImGui::PopStyleVar( 2 );
         ImGui::End();
 
         // ImGui::ShowTestWindow();

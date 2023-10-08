@@ -1,0 +1,22 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"C_Cpp.default.includePath": [
+			"${workspaceRoot}/apps/hmi/src",
+			"${workspaceRoot}/apps/hmi/src/**",
+			"${workspaceRoot}/engine.core/src/engine/**",
+			"${workspaceRoot}/engine.core/src/engine/components/**",
+			"${workspaceRoot}/engine.core/engine.core/dependencies/assimp/code/**",
+			"${workspaceRoot}/engine.core/engine.core/dependencies/assimp/include/**",
+			"${workspaceRoot}/engine.core/engine.core/dependencies/bullet3/src/**",
+			"${workspaceRoot}/engine.core/engine.core/dependencies/glm/glm/**",
+			"${workspaceRoot}/engine.core/engine.core/dependencies/glm/glm/gtc/**",
+			"${workspaceRoot}/engine.core/engine.core/dependencies/glm/glm/gtx/**",
+			"${workspaceRoot}/engine.core/engine.core/dependencies/glm/glm/detail/**"
+		]
+	}
+}

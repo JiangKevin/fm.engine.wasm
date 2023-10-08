@@ -6,7 +6,12 @@ void CoolGame::update( Input* input, std::chrono::microseconds delta )
 
 void CoolGame::init( GLManager* glManager )
 {
+    // 隐藏原生ui
+    auto m_gui = getEngine()->getWindow()->getGuiManager();
+    m_gui->togglePropertyEditor();
+    // 获取输入
     auto input = getEngine()->getWindow()->getInput();
+
     input->registerKeyToAction( SDLK_SPACE, "fire" );
     input->registerKeyToAction( SDLK_c, "swapCamera" );
 
@@ -166,11 +171,9 @@ void CoolGame::init( GLManager* glManager )
     MeshLoader money2( "monkey3.obj" );
     money2.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.8f, 100.0f );
     money2.getEntity()->addComponent< FreeMove >();
-#if defined( ANDROID )
-    money2.getEntity()->addComponent< FreeLook >( 0.1f );
-#else
+
     money2.getEntity()->addComponent< FreeLook >();
-#endif
+
     money2.getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 5 ) ).setScale( glm::vec3( 0.8, 0.8, 0.8 ) );
     money2.getEntity()->addComponent< SpotLight >( glm::vec3( 1.0f, 1.0f, 1.0f ), 2.8f, 0.7f, std::make_shared< Attenuation >( 0, 0, 0.2 ) );
 

@@ -4,40 +4,36 @@
 
 #include "Game.h"
 
-Game::Game(void)
+Game::Game( void )
 {
-  this->rootScene = std::make_shared<Entity>();
+    this->rootScene = std::make_shared< Entity >();
 }
 
-Game::~Game(void)
+Game::~Game( void ) {}
+
+void Game::setEngine( Engine* engine )
 {
+    this->engine = engine;
 }
 
-void Game::setEngine(Engine *engine)
+Engine* Game::getEngine( void ) const
 {
-  this->engine = engine;
+    return engine;
 }
 
-Engine *Game::getEngine(void) const
+void Game::init( GLManager* glManager ) {}
+
+void Game::addToScene( std::shared_ptr< Entity > entity )
 {
-  return engine;
+    rootScene->addChild( entity );
 }
 
-void Game::init(GLManager *glManager)
+void Game::update( Input* input, std::chrono::microseconds delta )
 {
+    rootScene->updateAll( input, delta );
 }
 
-void Game::addToScene(std::shared_ptr<Entity> entity)
+void Game::render( GLManager* glManager )
 {
-  rootScene->addChild(entity);
-}
-
-void Game::update(Input *input, std::chrono::microseconds delta)
-{
-  rootScene->updateAll(input, delta);
-}
-
-void Game::render(GLManager *glManager)
-{
-  glManager->renderScene(rootScene.get());
+    glManager->renderScene( rootScene.get() );
 }

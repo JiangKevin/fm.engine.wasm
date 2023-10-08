@@ -2,232 +2,233 @@
 //  Author: Shervin Aflatooni
 //
 
-#include <stdio.h>
-
 #include "Window.h"
 #include "GuiManager.h"
 #include "Logger.h"
+#include <stdio.h>
 
-Window::Window(void)
+Window::Window( void )
 {
-  m_quit = false;
+    m_quit = false;
 
-  if (SDL_Init(SDL_INIT_EVERYTHING & ~(SDL_INIT_TIMER | SDL_INIT_HAPTIC)) != 0)
-  {
-    log_err("SDL_Init error: %s", SDL_GetError());
-  }
+    if ( SDL_Init( SDL_INIT_EVERYTHING & ~( SDL_INIT_TIMER | SDL_INIT_HAPTIC ) ) != 0 )
+    {
+        log_err( "SDL_Init error: %s", SDL_GetError() );
+    }
 
-  SDL_DisplayMode mode;
-  SDL_GetCurrentDisplayMode(0, &mode);
+    SDL_DisplayMode mode;
+    SDL_GetCurrentDisplayMode( 0, &mode );
 
-  SDL_GL_SetAttribute(SDL_GL_RED_SIZE, BITS_PER_CHANNEL);
-  SDL_GL_SetAttribute(SDL_GL_GREEN_SIZE, BITS_PER_CHANNEL);
-  SDL_GL_SetAttribute(SDL_GL_BLUE_SIZE, BITS_PER_CHANNEL);
-  SDL_GL_SetAttribute(SDL_GL_ALPHA_SIZE, BITS_PER_CHANNEL);
-  SDL_GL_SetAttribute(SDL_GL_BUFFER_SIZE, BITS_PER_CHANNEL * 4);
-  SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, BITS_PER_CHANNEL * 2);
-  SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
+    SDL_GL_SetAttribute( SDL_GL_RED_SIZE, BITS_PER_CHANNEL );
+    SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, BITS_PER_CHANNEL );
+    SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, BITS_PER_CHANNEL );
+    SDL_GL_SetAttribute( SDL_GL_ALPHA_SIZE, BITS_PER_CHANNEL );
+    SDL_GL_SetAttribute( SDL_GL_BUFFER_SIZE, BITS_PER_CHANNEL * 4 );
+    SDL_GL_SetAttribute( SDL_GL_DEPTH_SIZE, BITS_PER_CHANNEL * 2 );
+    SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 
-#if defined(GLES3)
-  log_info("Using GLES 3");
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-#elif defined(GLES2)
-  log_info("Using GLES 2");
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
-#elif defined(EMSCRIPTEN)
-  log_info("Using GLES 2");
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 2);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+#if defined( GLES3 )
+    log_info( "Using GLES 3" );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 0 );
+#elif defined( GLES2 )
+    log_info( "Using GLES 2" );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 0 );
+#elif defined( EMSCRIPTEN )
+    log_info( "Using GLES 2" );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 0 );
 #else
-  log_info("Using GL 3");
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+    log_info( "Using GL 3" );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
+    SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 2 );
 #endif
 
-  m_fullscreen = false;
+    m_fullscreen = false;
 
-  uint32_t flags = SDL_WINDOW_OPENGL;
+    uint32_t flags = SDL_WINDOW_OPENGL;
 
-  if (m_fullscreen) {
-    flags |= SDL_WINDOW_FULLSCREEN;
-  }
-
-  m_window = SDL_CreateWindow("Engine!", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, mode.w, mode.h, flags);
-  if (m_window == nullptr)
-  {
-    log_err("SDL_CreateWindow error: %s", SDL_GetError());
-  }
-
-  m_glContext = SDL_GL_CreateContext(m_window);
-  if (m_glContext == nullptr)
-  {
-    log_err("SDL_GL_CreateContext error: %s", SDL_GetError());
-  }
-
-  SDL_GL_SetSwapInterval(0);
-
-  int display_w, display_h;
-  SDL_GL_GetDrawableSize(m_window, &display_w, &display_h);
-  this->m_width = display_w;
-  this->m_height = display_h;
-
-  log_info("Window init to: %i x %i", this->m_width, this->m_height);
-}
-
-Window::~Window(void)
-{
-  SDL_GL_DeleteContext(m_glContext);
-  SDL_DestroyWindow(m_window);
-  SDL_Quit();
-}
-
-void Window::init(void)
-{
-  log_info("Initializing GUI");
-  m_guiManager = std::make_unique<GuiManager>(getDrawableSize(), getDisplaySize(), getSDLWindow());
-}
-
-void Window::tick(void)
-{
-  m_input.setMouseDelta(0, 0);
-
-  SDL_Event event;
-
-  bool mouseWheelEvent = false;
-
-  while (SDL_PollEvent(&event))
-  {
-    switch (event.type)
+    if ( m_fullscreen )
     {
-    case SDL_MOUSEMOTION:
-      m_input.setMouseDelta(event.motion.xrel, event.motion.yrel);
-      m_input.setMousePosition(event.motion.x, event.motion.y);
-      break;
-    case SDL_KEYDOWN:
-    case SDL_KEYUP:
-      m_guiManager->setKeyEvent(event.key.keysym.sym & ~SDLK_SCANCODE_MASK, event.type == SDL_KEYDOWN);
-      m_input.handleKeyboardEvent(event.key);
-      break;
-    case SDL_MOUSEBUTTONDOWN:
-    case SDL_MOUSEBUTTONUP:
-      m_input.handleMouseEvent(event.button);
-      break;
-    case SDL_MOUSEWHEEL:
-      m_input.handleMouseWheelEvent(event.wheel.x, event.wheel.y);
-      mouseWheelEvent = true;
-      break;
-    case SDL_TEXTINPUT:
-      m_guiManager->addInputCharactersUTF8(event.text.text);
-      break;
-    case SDL_MULTIGESTURE:
-      m_input.handleMultigesture(event.mgesture);
-      break;
-    case SDL_QUIT:
-      m_quit = true;
-      break;
+        flags |= SDL_WINDOW_FULLSCREEN;
     }
-  }
 
-  if (mouseWheelEvent == false)
-  {
-    m_input.handleMouseWheelEvent(0, 0);
-  }
+    m_window = SDL_CreateWindow( "Engine!", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, mode.w, mode.h, flags );
+    if ( m_window == nullptr )
+    {
+        log_err( "SDL_CreateWindow error: %s", SDL_GetError() );
+    }
+
+    m_glContext = SDL_GL_CreateContext( m_window );
+    if ( m_glContext == nullptr )
+    {
+        log_err( "SDL_GL_CreateContext error: %s", SDL_GetError() );
+    }
+
+    SDL_GL_SetSwapInterval( 0 );
+
+    int display_w, display_h;
+    SDL_GL_GetDrawableSize( m_window, &display_w, &display_h );
+    this->m_width  = display_w;
+    this->m_height = display_h;
+
+    log_info( "Window init to: %i x %i", this->m_width, this->m_height );
 }
 
-void Window::swapBuffer(void)
+Window::~Window( void )
 {
-  SDL_GL_SwapWindow(m_window);
+    SDL_GL_DeleteContext( m_glContext );
+    SDL_DestroyWindow( m_window );
+    SDL_Quit();
 }
 
-Input *Window::getInput(void)
+void Window::init( void )
 {
-  return &m_input;
+    log_info( "Initializing GUI" );
+    m_guiManager = std::make_unique< GuiManager >( getDrawableSize(), getDisplaySize(), getSDLWindow() );
 }
 
-SDL_Window *Window::getSDLWindow(void)
+void Window::tick( void )
 {
-  return m_window;
+    m_input.setMouseDelta( 0, 0 );
+
+    SDL_Event event;
+
+    bool mouseWheelEvent = false;
+
+    while ( SDL_PollEvent( &event ) )
+    {
+        switch ( event.type )
+        {
+            case SDL_MOUSEMOTION:
+                m_input.setMouseDelta( event.motion.xrel, event.motion.yrel );
+                m_input.setMousePosition( event.motion.x, event.motion.y );
+                break;
+            case SDL_KEYDOWN:
+            case SDL_KEYUP:
+                m_guiManager->setKeyEvent( event.key.keysym.sym & ~SDLK_SCANCODE_MASK, event.type == SDL_KEYDOWN );
+                m_input.handleKeyboardEvent( event.key );
+                break;
+            case SDL_MOUSEBUTTONDOWN:
+            case SDL_MOUSEBUTTONUP:
+                m_input.handleMouseEvent( event.button );
+                break;
+            case SDL_MOUSEWHEEL:
+                m_input.handleMouseWheelEvent( event.wheel.x, event.wheel.y );
+                mouseWheelEvent = true;
+                break;
+            case SDL_TEXTINPUT:
+                m_guiManager->addInputCharactersUTF8( event.text.text );
+                break;
+            case SDL_MULTIGESTURE:
+                m_input.handleMultigesture( event.mgesture );
+                break;
+            case SDL_QUIT:
+                m_quit = true;
+                break;
+        }
+    }
+
+    if ( mouseWheelEvent == false )
+    {
+        m_input.handleMouseWheelEvent( 0, 0 );
+    }
 }
 
-int Window::getWidth(void) const
+void Window::swapBuffer( void )
 {
-  return this->m_width;
+    SDL_GL_SwapWindow( m_window );
 }
 
-int Window::getHeight(void) const
+Input* Window::getInput( void )
 {
-  return this->m_height;
+    return &m_input;
 }
 
-glm::vec4 Window::getViewport(void) const
+SDL_Window* Window::getSDLWindow( void )
 {
-  return glm::vec4(0.0f, 0.0f, this->m_width, this->m_height);
+    return m_window;
 }
 
-glm::vec2 Window::getDisplaySize(void) const
+int Window::getWidth( void ) const
 {
-  int w, h;
-  SDL_GetWindowSize(m_window, &w, &h);
-  return glm::vec2((float)w, (float)h);
+    return this->m_width;
 }
 
-glm::vec2 Window::getDrawableSize(void) const
+int Window::getHeight( void ) const
 {
-  int display_w, display_h;
-  SDL_GL_GetDrawableSize(m_window, &display_w, &display_h);
-  return glm::vec2((float)display_w, (float)display_h);
+    return this->m_height;
 }
 
-GuiManager *Window::getGuiManager(void) const
+glm::vec4 Window::getViewport( void ) const
 {
-  return m_guiManager.get();
+    return glm::vec4( 0.0f, 0.0f, this->m_width, this->m_height );
 }
 
-const char *Window::getClipboardText()
+glm::vec2 Window::getDisplaySize( void ) const
 {
-  return SDL_GetClipboardText();
+    int w, h;
+    SDL_GetWindowSize( m_window, &w, &h );
+    return glm::vec2( ( float )w, ( float )h );
 }
 
-void Window::setClipboardText(const char *text)
+glm::vec2 Window::getDrawableSize( void ) const
 {
-  SDL_SetClipboardText(text);
+    int display_w, display_h;
+    SDL_GL_GetDrawableSize( m_window, &display_w, &display_h );
+    return glm::vec2( ( float )display_w, ( float )display_h );
 }
 
-void Window::makeCurrentContext(void) const
+GuiManager* Window::getGuiManager( void ) const
 {
-  SDL_GL_MakeCurrent(m_window, m_glContext);
+    return m_guiManager.get();
 }
 
-bool Window::shouldQuit(void) const
+const char* Window::getClipboardText()
 {
-  return m_quit;
+    return SDL_GetClipboardText();
 }
 
-void Window::drawCursor(bool enabled)
+void Window::setClipboardText( const char* text )
 {
-  SDL_ShowCursor(enabled);
+    SDL_SetClipboardText( text );
 }
 
-void Window::setFullscreen(uint32_t flag)
+void Window::makeCurrentContext( void ) const
 {
-  SDL_SetWindowFullscreen(m_window, flag);
+    SDL_GL_MakeCurrent( m_window, m_glContext );
 }
 
-void Window::toggleFullscreen(void)
+bool Window::shouldQuit( void ) const
 {
-  m_fullscreen = !m_fullscreen;
+    return m_quit;
+}
 
-  if (m_fullscreen) {
-    setFullscreen(SDL_WINDOW_FULLSCREEN);
-  }
-  else {
-    setFullscreen(0);
-  }
-  
+void Window::drawCursor( bool enabled )
+{
+    SDL_ShowCursor( enabled );
+}
+
+void Window::setFullscreen( uint32_t flag )
+{
+    SDL_SetWindowFullscreen( m_window, flag );
+}
+
+void Window::toggleFullscreen( void )
+{
+    m_fullscreen = ! m_fullscreen;
+
+    if ( m_fullscreen )
+    {
+        setFullscreen( SDL_WINDOW_FULLSCREEN );
+    }
+    else
+    {
+        setFullscreen( 0 );
+    }
 }

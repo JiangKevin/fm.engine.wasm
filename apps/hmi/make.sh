@@ -1,6 +1,6 @@
 #
-reset
-clear
+# reset
+# clear
 #
 export dev_root="/Users/kevin.jiang/Dev/src/github-res/fm.engine"
 export website="/Users/kevin.jiang/Dev/src/github-res/fm.engine/website"

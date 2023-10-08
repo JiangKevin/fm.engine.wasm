@@ -1,7 +1,7 @@
 #!/bin/bash
 #
-reset
-clear
+# reset
+# clear
 #
 set -e
 

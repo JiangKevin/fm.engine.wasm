@@ -24,26 +24,21 @@ void testGame::init( GLManager* glManager )
 
         addToScene( plane );
     }
-
+    //
     MeshLoader money( "monkey3.obj" );
     money.getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
     money.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.05f, 100.0f );
-    // money.getEntity()->addComponent<SpotLight>(glm::vec3(0.1f, 1.0f, 1.0f), 5.8f,
-    // 0.7f, std::make_shared<Attenuation>(0, 0, 0.2));
     money.getEntity()->addComponent< SphereCollider >( 1, 1 );
     addToScene( money.getEntity() );
-
+    //
     MeshLoader money2( "monkey3.obj" );
     money2.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.8f, 100.0f );
     money2.getEntity()->addComponent< FreeMove >();
-
     money2.getEntity()->addComponent< FreeLook >();
-
     money2.getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 5 ) ).setScale( glm::vec3( 0.8, 0.8, 0.8 ) );
     money2.getEntity()->addComponent< SpotLight >( glm::vec3( 1.0f, 1.0f, 1.0f ), 2.8f, 0.7f, std::make_shared< Attenuation >( 0, 0, 0.2 ) );
-
     addToScene( money2.getEntity() );
-
+    //
     primary_camera  = money2.getEntity()->getComponent< PerspectiveCamera >();
     primary_camera2 = money.getEntity()->getComponent< PerspectiveCamera >();
 

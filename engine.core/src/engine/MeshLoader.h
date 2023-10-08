@@ -27,7 +27,7 @@ public:
 
     std::shared_ptr< Entity > getEntity( void ) const;
 private:
-    void loadScene( const aiScene* scene );
+    void loadScene( const aiScene* scene,std::string tag="" );
 
     std::string m_fileName;
 

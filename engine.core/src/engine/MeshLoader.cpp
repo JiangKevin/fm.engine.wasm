@@ -40,7 +40,7 @@ MeshLoader::MeshLoader( const std::string file )
         }
         else
         {
-            loadScene( scene );
+            loadScene( scene, file );
         }
     }
 }
@@ -52,10 +52,10 @@ std::shared_ptr< Entity > MeshLoader::getEntity( void ) const
     return m_entity;
 }
 
-void MeshLoader::loadScene( const aiScene* scene )
+void MeshLoader::loadScene( const aiScene* scene,std::string tag)
 {
     m_entity = std::make_shared< Entity >();
-
+    m_entity->updateTag( tag );
     for ( int i = 0; i < scene->mNumMeshes; i++ )
     {
         const aiMesh* model = scene->mMeshes[ i ];

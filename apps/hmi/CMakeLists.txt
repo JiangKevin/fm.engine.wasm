@@ -59,7 +59,7 @@ SET(CMAKE_CXX_FLAGS "-s USE_SDL=2 -std=c++14 -O3 -s USE_GLFW=3")
 
 # link flag
 set(CMAKE_EXE_LINKER_FLAGS
-  ${CMAKE_EXE_LINKER_FLAGS} "--preload-file $ENV{dev_root}/apps/hmi/assets@assets --emrun"
+  ${CMAKE_EXE_LINKER_FLAGS} "--preload-file $ENV{dev_root}/apps/hmi/assets@assets --emrun -s TOTAL_MEMORY=2048MB "
 )
 add_definitions(-DASSET_DIR="assets/")
 add_definitions(-DEMSCRIPTEN)

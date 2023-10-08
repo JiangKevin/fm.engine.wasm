@@ -12,7 +12,6 @@
 #include <iostream>
 #include <limits>
 
-
 #ifdef EMSCRIPTEN
     #include <emscripten.h>
 
@@ -24,9 +23,6 @@ static Engine* instance = NULL;
 
 Engine::Engine( Game* game )
 {
-#ifdef EMSCRIPTEN
-    log_info( "From wasm: out ASSET_DIR = %s ", ASSET_DIR );
-#endif
     log_info( "Initializing SDL" );
     m_window = std::make_unique< Window >();
 

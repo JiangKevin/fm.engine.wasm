@@ -357,7 +357,7 @@ void renderSceneGraph( Entity* sceneGraph )
     ImGui::AlignFirstTextHeightToWidgets();
 
     ImGui::PushStyleColor( ImGuiCol_Text, ImColor( 0.78f, 1.0f, 0.58f, 1.0f ) );
-    bool node_open = ImGui::TreeNodeEx( "Node", ImGuiTreeNodeFlags_DefaultOpen, "%s_%u", "node", sceneGraph );
+    bool node_open = ImGui::TreeNodeEx( "Node", ImGuiTreeNodeFlags_DefaultOpen, "%s:%s", "node", sceneGraph->getTag().c_str() );
     ImGui::PopStyleColor();
     ImGui::NextColumn();
     ImGui::AlignFirstTextHeightToWidgets();

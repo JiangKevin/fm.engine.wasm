@@ -12,7 +12,7 @@
 #include <memory>
 #include <typeindex>
 #include <vector>
-// 
+//
 #include "Input.h"
 class Engine;
 
@@ -25,8 +25,9 @@ public:
     Entity( void );
     ~Entity( void );
 
-    void updateTag(std::string tag);
-    void addChild( std::shared_ptr< Entity > child );
+    void        updateTag( std::string tag );
+    std::string getTag();
+    void        addChild( std::shared_ptr< Entity > child );
 
     template < class T > inline void addComponent( std::shared_ptr< T > component )
     {

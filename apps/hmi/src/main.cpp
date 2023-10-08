@@ -3,7 +3,7 @@
 //
 int main( int argc, char* argv[] )
 {
-    testGame game;
+    CoolGame game;
     Engine   gameEngine( &game );
 
     gameEngine.start();

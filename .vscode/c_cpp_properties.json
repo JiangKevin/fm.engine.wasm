@@ -1,0 +1,33 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${default}",
+                "${workspaceFolder}/engine.core/dependencies/glm",
+                "${workspaceRoot}/apps/hmi/src",
+                "${workspaceRoot}/apps/hmi/src/**",
+                "${workspaceRoot}/engine.core/src/engine",
+                "${workspaceRoot}/engine.core/src/engine/**",
+                "${workspaceRoot}/engine.core/src/engine/components/",
+                "${workspaceRoot}/engine.core/src/engine/components/**",
+                "${workspaceRoot}/engine.core/engine.core/dependencies/assimp/code/**",
+                "${workspaceRoot}/engine.core/engine.core/dependencies/assimp/include/**",
+                "${workspaceRoot}/engine.core/engine.core/dependencies/bullet3/src/**",
+                "${workspaceRoot}/engine.core/engine.core/dependencies/glm/glm/**",
+                "${workspaceRoot}/engine.core/engine.core/dependencies/glm/glm/gtc/**",
+                "${workspaceRoot}/engine.core/engine.core/dependencies/glm/glm/gtx/**",
+                "${workspaceRoot}/engine.core/engine.core/dependencies/glm/glm/detail/**"
+            ],
+            "defines": [],
+            "macFrameworkPath": [
+                "/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/System/Library/Frameworks"
+            ],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "macos-clang-arm64"
+        }
+    ],
+    "version": 4
+}

@@ -41,7 +41,7 @@ set(SDL2_LIBRARY SDL2)
 set(GLEW_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/glew/include)
 set(GLEW_LIBRARIES libglew_shared)
 
-set(ASSIMP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/assimp/include)
+set(ASSIMP_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/assimp/include ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/assimp/code)
 set(ASSIMP_LIBRARY assimp)
 
 set(GLM_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/glm/)
@@ -76,6 +76,7 @@ IF(EMSCRIPTEN)
     ${STB_INCLUDE_DIRS}
     ${ASSIMP_INCLUDE_DIR}
     ${CMAKE_BINARY_DIR}/dependencies/assimp/include
+    ${CMAKE_BINARY_DIR}/dependencies/assimp/code
     ${IMGUI_INCLUDE_DIRS}
     ${BULLET_INCLUDE_DIRS}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/engine/

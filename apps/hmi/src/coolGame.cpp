@@ -172,7 +172,7 @@ void CoolGame::init( GLManager* glManager )
         addToScene( ml.getEntity() );
     }
 
-    MeshLoader money( "Pregnant.obj" );
+    MeshLoader money( "Jumping.fbx" );
     money.getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
     money.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.05f, 100.0f );
     money.getEntity()->addComponent< SphereCollider >( 1, 1 );

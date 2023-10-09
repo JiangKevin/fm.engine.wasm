@@ -131,7 +131,7 @@ add_definitions(-DASSIMP_BUILD_NO_IFC_EXPORTER)
 set(ASSIMP_BUILD_XGL_IMPORTER OFF CACHE BOOL "Build importer")
 add_definitions(-DASSIMP_BUILD_NO_XGL_EXPORTER)
 
-set(ASSIMP_BUILD_FBX_IMPORTER OFF CACHE BOOL "Build importer")
+set(ASSIMP_BUILD_FBX_IMPORTER ON CACHE BOOL "Build importer")
 add_definitions(-DASSIMP_BUILD_NO_FBX_EXPORTER)
 
 set(ASSIMP_BUILD_Q3D_IMPORTER OFF CACHE BOOL "Build importer")
@@ -175,7 +175,7 @@ IF(WIN32)
   add_library(imgui STATIC ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui.cpp ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_demo.cpp ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_draw.cpp)
 ELSEif(EMSCRIPTEN)
   add_library(imgui STATIC ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui.cpp ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_demo.cpp ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_draw.cpp)
-  ELSE()
+ELSE()
   add_library(imgui SHARED ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui.cpp ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_demo.cpp ${CMAKE_CURRENT_SOURCE_DIR}/imgui/imgui_draw.cpp)
 ENDIF()
 

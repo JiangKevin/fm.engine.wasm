@@ -42,74 +42,72 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *  @brief Default File I/O implementation for #Importer
  */
 
-
-#include <assimp/ai_assert.h>
 #include "DefaultIOStream.h"
-#include <sys/types.h>
+#include <assimp/ai_assert.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 
 using namespace Assimp;
 
 // ----------------------------------------------------------------------------------
 DefaultIOStream::~DefaultIOStream()
 {
-    if (mFile) {
-        ::fclose(mFile);
+    if ( mFile )
+    {
+        ::fclose( mFile );
     }
 }
 
 // ----------------------------------------------------------------------------------
-size_t DefaultIOStream::Read(void* pvBuffer,
-    size_t pSize,
-    size_t pCount)
+size_t DefaultIOStream::Read( void* pvBuffer, size_t pSize, size_t pCount )
 {
-    ai_assert(NULL != pvBuffer && 0 != pSize && 0 != pCount);
-    return (mFile ? ::fread(pvBuffer, pSize, pCount, mFile) : 0);
+    ai_assert( NULL != pvBuffer && 0 != pSize && 0 != pCount );
+    return ( mFile ? ::fread( pvBuffer, pSize, pCount, mFile ) : 0 );
 }
 
 // ----------------------------------------------------------------------------------
-size_t DefaultIOStream::Write(const void* pvBuffer,
-    size_t pSize,
-    size_t pCount)
+size_t DefaultIOStream::Write( const void* pvBuffer, size_t pSize, size_t pCount )
 {
-    ai_assert(NULL != pvBuffer && 0 != pSize && 0 != pCount);
-    return (mFile ? ::fwrite(pvBuffer, pSize, pCount, mFile) : 0);
+    ai_assert( NULL != pvBuffer && 0 != pSize && 0 != pCount );
+    return ( mFile ? ::fwrite( pvBuffer, pSize, pCount, mFile ) : 0 );
 }
 
 // ----------------------------------------------------------------------------------
-aiReturn DefaultIOStream::Seek(size_t pOffset,
-     aiOrigin pOrigin)
+aiReturn DefaultIOStream::Seek( size_t pOffset, aiOrigin pOrigin )
 {
-    if (!mFile) {
+    if ( ! mFile )
+    {
         return AI_FAILURE;
     }
 
     // Just to check whether our enum maps one to one with the CRT constants
-    static_assert(aiOrigin_CUR == SEEK_CUR &&
-        aiOrigin_END == SEEK_END && aiOrigin_SET == SEEK_SET, "aiOrigin_CUR == SEEK_CUR && \
-        aiOrigin_END == SEEK_END && aiOrigin_SET == SEEK_SET");
+    static_assert( aiOrigin_CUR == SEEK_CUR && aiOrigin_END == SEEK_END && aiOrigin_SET == SEEK_SET, "aiOrigin_CUR == SEEK_CUR && \
+        aiOrigin_END == SEEK_END && aiOrigin_SET == SEEK_SET" );
 
     // do the seek
-    return (0 == ::fseek(mFile, (long)pOffset,(int)pOrigin) ? AI_SUCCESS : AI_FAILURE);
+    return ( 0 == ::fseek( mFile, ( long )pOffset, ( int )pOrigin ) ? AI_SUCCESS : AI_FAILURE );
 }
 
 // ----------------------------------------------------------------------------------
 size_t DefaultIOStream::Tell() const
 {
-    if (!mFile) {
+    if ( ! mFile )
+    {
         return 0;
     }
-    return ::ftell(mFile);
+    return ::ftell( mFile );
 }
 
 // ----------------------------------------------------------------------------------
 size_t DefaultIOStream::FileSize() const
 {
-    if (! mFile || mFilename.empty()) {
+    if ( ! mFile || mFilename.empty() )
+    {
         return 0;
     }
 
-    if (SIZE_MAX == cachedSize) {
+    if ( SIZE_MAX == cachedSize )
+    {
 
         // Although fseek/ftell would allow us to reuse the exising file handle here,
         // it is generally unsafe because:
@@ -119,18 +117,18 @@ size_t DefaultIOStream::FileSize() const
         //
         // See here for details:
         // https://www.securecoding.cert.org/confluence/display/seccode/FIO19-C.+Do+not+use+fseek()+and+ftell()+to+compute+the+size+of+a+regular+file
-#if defined _WIN32 && !defined __GNUC__
+#if defined _WIN32 && ! defined __GNUC__
         struct __stat64 fileStat;
-        int err = _stat64(  mFilename.c_str(), &fileStat );
-        if (0 != err)
+        int             err = _stat64( mFilename.c_str(), &fileStat );
+        if ( 0 != err )
             return 0;
-        cachedSize = (size_t) (fileStat.st_size);
+        cachedSize = ( size_t )( fileStat.st_size );
 #else
         struct stat fileStat;
-        int err = stat(mFilename.c_str(), &fileStat );
-        if (0 != err)
+        int         err = stat( mFilename.c_str(), &fileStat );
+        if ( 0 != err )
             return 0;
-        cachedSize = (size_t) (fileStat.st_size);
+        cachedSize = ( size_t )( fileStat.st_size );
 #endif
     }
     return cachedSize;
@@ -139,8 +137,9 @@ size_t DefaultIOStream::FileSize() const
 // ----------------------------------------------------------------------------------
 void DefaultIOStream::Flush()
 {
-    if (mFile) {
-        ::fflush(mFile);
+    if ( mFile )
+    {
+        ::fflush( mFile );
     }
 }
 

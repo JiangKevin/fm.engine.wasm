@@ -4,8 +4,10 @@
 
 #include "MeshLoader.h"
 #include "CustomIOSystem.h"
+#include "FBXImporter.h"
 #include "Logger.h"
 #include "components/MeshRenderer.h"
+#include <algorithm>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 
@@ -27,13 +29,37 @@ MeshLoader::MeshLoader( const std::string file )
     }
     else
     {
-        Assimp::Importer importer;
-        importer.SetIOHandler( new CustomIOSystem() );
+        std::string extension = "";
+        if ( m_fileName.find_last_of( "." ) != std::string::npos )
+        {
+            extension = m_fileName.substr( m_fileName.find_last_of( "." ) );
+        }
+        // 转换为大写
+        transform( extension.begin(), extension.end(), extension.begin(),
+                   []( unsigned char c )
+                   {
+                       return toupper( c );
+                   } );
+        // 打印文件名扩展名
+        printf( "From wasm: file extension = %s \n", extension.c_str() );
 
         log_info( "Loading mesh: %s", file.c_str() );
-
+        // const aiScene* scene = importer.ReadFile( file, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace );
+        //
+        // if ( ( extension == ".OBJ" ) )
+        // {
+        Assimp::Importer importer;
+        importer.SetIOHandler( new CustomIOSystem() );
         const aiScene* scene = importer.ReadFile( file, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace );
+        // }
+        // if ( extension == ".FBX" )
+        // {
+        //     Assimp::FBXImporter importer;
+        //     importer.SetIOHandler( new CustomIOSystem() );
+        //     const aiScene* scene = importer.ReadFile(importer, file, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace );
+        // }
 
+        //
         if ( ! scene )
         {
             log_err( "Failed to load mesh: %s", file.c_str() );

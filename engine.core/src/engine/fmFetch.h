@@ -1,5 +1,6 @@
 #pragma once
 #include "Game.h"
+#include "components/SphereCollider.h"
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <emscripten/fetch.h>
@@ -63,11 +64,12 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
             }
             else
             {
+                // 加载场景资源
                 user_data->bn_ptr->ml_ptr->loadScene( scene, user_data->bn_ptr->url );
                 /**/
+                // 添加默认的坐标与碰撞信息
                 user_data->bn_ptr->ml_ptr->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
-                // user_data->bn_ptr->ml_ptr->getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.05f, 100.0f );
-                // user_data->bn_ptr->ml_ptr->getEntity()->addComponent< SphereCollider >( 1, 1 );
+                user_data->bn_ptr->ml_ptr->getEntity()->addComponent< SphereCollider >( 1, 1 );
                 user_data->bn_ptr->game_ptr->addToScene( user_data->bn_ptr->ml_ptr->getEntity() );
             }
         }

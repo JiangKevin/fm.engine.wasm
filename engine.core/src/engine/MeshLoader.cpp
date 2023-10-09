@@ -15,7 +15,7 @@
 // TODO: need to come back and refactor this, make it load on a seperate thread.
 std::map< std::string, std::vector< MeshRendererData > > MeshLoader::sceneMeshRendererDataCache;
 
-MeshLoader::MeshLoader( const std::string file, bool fromHttp, Game* gamePtr )
+MeshLoader::MeshLoader( const std::string file, bool fromHttp, Game* gamePtr, std::string extension )
 {
     /**/
     game_ptr = gamePtr;
@@ -33,23 +33,11 @@ MeshLoader::MeshLoader( const std::string file, bool fromHttp, Game* gamePtr )
     }
     else
     {
-        std::string extension = "";
-        if ( m_fileName.find_last_of( "." ) != std::string::npos )
-        {
-            extension = m_fileName.substr( m_fileName.find_last_of( "." ) );
-        }
-        // 转换为大写
-        transform( extension.begin(), extension.end(), extension.begin(),
-                   []( unsigned char c )
-                   {
-                       return toupper( c );
-                   } );
-        // 打印文件名扩展名
-        printf( "From wasm: file extension = %s \n", extension.c_str() );
-        log_info( "Loading mesh: %s", file.c_str() );
+
         // 验证来源
         if ( fromHttp == false )
         {
+            log_info( "Loading mesh: %s From fileSystem", file.c_str() );
             Assimp::Importer importer;
             importer.SetIOHandler( new CustomIOSystem() );
             const aiScene* scene = importer.ReadFile( file, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace );
@@ -65,12 +53,13 @@ MeshLoader::MeshLoader( const std::string file, bool fromHttp, Game* gamePtr )
         }
         else
         {
+            log_info( "Loading mesh: %s From http", file.c_str() );
             /**/
             Assimp::Importer* importer = new Assimp::Importer();
             blob_node*        bn_ptr   = new blob_node();
             bn_ptr->game_ptr           = game_ptr;
             bn_ptr->ml_ptr             = this;
-            bn_ptr->url                = m_fileName;
+            bn_ptr->url                = "./assets/" + m_fileName;
             bn_ptr->importer           = importer;
             bn_ptr->mould_file_type    = "OBJ";
             /**/
@@ -133,6 +122,7 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag )
 
         if ( pMaterial->GetTextureCount( aiTextureType_DIFFUSE ) > 0 && pMaterial->GetTexture( aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL ) == AI_SUCCESS )
         {
+            log_info( "diffuseMap tex path: %s", Path.data );
             diffuseMap = std::make_shared< Texture >( Asset( Path.data ) );
         }
         else
@@ -142,6 +132,7 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag )
 
         if ( pMaterial->GetTextureCount( aiTextureType_HEIGHT ) > 0 && pMaterial->GetTexture( aiTextureType_HEIGHT, 0, &Path, NULL, NULL, NULL, NULL, NULL ) == AI_SUCCESS )
         {
+            log_info( "normalMap tex path: %s", Path.data );
             normalMap = std::make_shared< Texture >( Asset( Path.data ) );
         }
         else
@@ -151,6 +142,7 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag )
 
         if ( pMaterial->GetTextureCount( aiTextureType_SPECULAR ) > 0 && pMaterial->GetTexture( aiTextureType_SPECULAR, 0, &Path, NULL, NULL, NULL, NULL, NULL ) == AI_SUCCESS )
         {
+            log_info( "specularMap tex path: %s", Path.data );
             specularMap = std::make_shared< Texture >( Asset( Path.data ) );
         }
         else

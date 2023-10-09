@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Entity.h"
+#include "Game.h"
 #include "Material.h"
 #include "Mesh.h"
 #include "Texture.h"
@@ -22,16 +23,15 @@ struct MeshRendererData
 class MeshLoader
 {
 public:
-    MeshLoader( const std::string file );
+    MeshLoader( const std::string file, bool fromHttp = false, Game* gamePtr = nullptr );
     ~MeshLoader( void );
-
     std::shared_ptr< Entity > getEntity( void ) const;
+    /**/
+    void loadScene( const aiScene* scene, std::string tag = "" );
+    /**/
+    Game* game_ptr;
 private:
-    void loadScene( const aiScene* scene,std::string tag="" );
-
-    std::string m_fileName;
-
-    std::shared_ptr< Entity > m_entity;
-
+    std::string                                                     m_fileName;
+    std::shared_ptr< Entity >                                       m_entity;
     static std::map< std::string, std::vector< MeshRendererData > > sceneMeshRendererDataCache;
 };

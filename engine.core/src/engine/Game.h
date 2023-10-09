@@ -13,23 +13,26 @@ class Engine;
 class Game
 {
 public:
-  Game(void);
-  virtual ~Game(void);
+    Game( void );
+    virtual ~Game( void );
 
-  void setEngine(Engine *engine);
+    void setEngine( Engine* engine );
 
-  virtual void init(GLManager *glManager);
+    virtual void init( GLManager* glManager );
 
-  virtual void update(Input *input, std::chrono::microseconds delta);
-  virtual void render(GLManager *glManager);
+    virtual void update( Input* input, std::chrono::microseconds delta );
+    virtual void render( GLManager* glManager );
 
-  inline std::shared_ptr<Entity> getRootScene(void) { return rootScene; };
-
+    inline std::shared_ptr< Entity > getRootScene( void )
+    {
+        return rootScene;
+    };
+public:
+    /**/
+    void addToScene( std::shared_ptr< Entity > entity );
 protected:
-  void addToScene(std::shared_ptr<Entity> entity);
-  Engine *getEngine(void) const;
-
+    Engine* getEngine( void ) const;
 private:
-  std::shared_ptr<Entity> rootScene;
-  Engine *engine;
+    std::shared_ptr< Entity > rootScene;
+    Engine*                   engine;
 };

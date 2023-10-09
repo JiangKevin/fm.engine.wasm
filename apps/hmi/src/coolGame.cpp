@@ -1,4 +1,5 @@
 #include "coolGame.h"
+//
 void CoolGame::update( Input* input, std::chrono::microseconds delta )
 {
     Game::update( input, delta );
@@ -172,11 +173,11 @@ void CoolGame::init( GLManager* glManager )
         addToScene( ml.getEntity() );
     }
 
-    MeshLoader money( "Jumping.fbx" );
-    money.getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
-    money.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.05f, 100.0f );
-    money.getEntity()->addComponent< SphereCollider >( 1, 1 );
-    addToScene( money.getEntity() );
+    MeshLoader money( "./assets/AncientUgandan.obj", true, this );
+    // money.getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
+    // money.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.05f, 100.0f );
+    // money.getEntity()->addComponent< SphereCollider >( 1, 1 );
+    // addToScene( money.getEntity() );
 
     MeshLoader money2( "monkey3.obj" );
     money2.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.8f, 100.0f );

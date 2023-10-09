@@ -1,6 +1,7 @@
 #pragma once
 //
 #include "Engine.h"
+#include "GuiManager.h"
 #include "Logger.h"
 #include "Mesh.h"
 #include "MeshLoader.h"
@@ -17,7 +18,6 @@
 #include "components/SphereCollider.h"
 #include "components/SpotLight.h"
 #include <SDL_main.h>
-#include "GuiManager.h"
 
 class CoolGame : public Game
 {

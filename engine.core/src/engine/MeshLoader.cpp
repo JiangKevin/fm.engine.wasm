@@ -7,6 +7,7 @@
 #include "FBXImporter.h"
 #include "Logger.h"
 #include "components/MeshRenderer.h"
+#include "fmFetch.h"
 #include <algorithm>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -14,8 +15,11 @@
 // TODO: need to come back and refactor this, make it load on a seperate thread.
 std::map< std::string, std::vector< MeshRendererData > > MeshLoader::sceneMeshRendererDataCache;
 
-MeshLoader::MeshLoader( const std::string file )
+MeshLoader::MeshLoader( const std::string file, bool fromHttp, Game* gamePtr )
 {
+    /**/
+    game_ptr = gamePtr;
+    /**/
     m_fileName = file;
 
     if ( MeshLoader::sceneMeshRendererDataCache[ m_fileName ].size() > 0 )
@@ -42,31 +46,39 @@ MeshLoader::MeshLoader( const std::string file )
                    } );
         // 打印文件名扩展名
         printf( "From wasm: file extension = %s \n", extension.c_str() );
-
         log_info( "Loading mesh: %s", file.c_str() );
-        // const aiScene* scene = importer.ReadFile( file, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace );
-        //
-        // if ( ( extension == ".OBJ" ) )
-        // {
-        Assimp::Importer importer;
-        importer.SetIOHandler( new CustomIOSystem() );
-        const aiScene* scene = importer.ReadFile( file, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace );
-        // }
-        // if ( extension == ".FBX" )
-        // {
-        //     Assimp::FBXImporter importer;
-        //     importer.SetIOHandler( new CustomIOSystem() );
-        //     const aiScene* scene = importer.ReadFile(importer, file, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace );
-        // }
-
-        //
-        if ( ! scene )
+        // 验证来源
+        if ( fromHttp == false )
         {
-            log_err( "Failed to load mesh: %s", file.c_str() );
+            Assimp::Importer importer;
+            importer.SetIOHandler( new CustomIOSystem() );
+            const aiScene* scene = importer.ReadFile( file, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace );
+            //
+            if ( ! scene )
+            {
+                log_err( "Failed to load mesh: %s", file.c_str() );
+            }
+            else
+            {
+                loadScene( scene, file );
+            }
         }
         else
         {
-            loadScene( scene, file );
+            /**/
+            Assimp::Importer* importer = new Assimp::Importer();
+            blob_node*        bn_ptr   = new blob_node();
+            bn_ptr->game_ptr           = game_ptr;
+            bn_ptr->ml_ptr             = this;
+            bn_ptr->url                = m_fileName;
+            bn_ptr->importer           = importer;
+            bn_ptr->mould_file_type    = "OBJ";
+            /**/
+            fecthRequest* mRequest = new fecthRequest();
+            mRequest->bn_ptr       = bn_ptr;
+            mRequest->dataType     = FETCH_BLOB;
+            /***/
+            create_http_fetch( mRequest );
         }
     }
 }

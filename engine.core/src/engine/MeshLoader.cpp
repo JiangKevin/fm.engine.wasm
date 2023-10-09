@@ -115,7 +115,7 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
         if ( fromHttp == false )  // From filesystem
         {
             const aiMaterial* pMaterial = scene->mMaterials[ model->mMaterialIndex ];
-            log_info( "tex num: %i From filesystem", model->mMaterialIndex );
+            log_info( "tex num: %s,%i From filesystem", tag.c_str(), model->mMaterialIndex );
             /**/
             std::shared_ptr< Texture > diffuseMap;
             std::shared_ptr< Texture > normalMap;
@@ -165,15 +165,18 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
         }
         else  // From http
         {
+             // Handle material info
             const aiMaterial* pMaterial = scene->mMaterials[ model->mMaterialIndex ];
-            log_info( "tex num: %i From http", model->mMaterialIndex );
+            log_info( "tex num: %s,%i From http", tag.c_str(), model->mMaterialIndex );
             /**/
             std::shared_ptr< Texture > diffuseMap;
             std::shared_ptr< Texture > normalMap;
             std::shared_ptr< Texture > specularMap;
             aiString                   Path;
             /**/
-            if ( pMaterial->GetTextureCount( aiTextureType_DIFFUSE ) > 0 )
+            log_info( "TextureCount: %i From http", pMaterial->GetTextureCount( aiTextureType_DIFFUSE ) );
+            //
+            if ( pMaterial->GetTexture( aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL ) == AI_SUCCESS )
             {
                 log_info( "diffuseMap tex path: %s From http", Path.data );
 

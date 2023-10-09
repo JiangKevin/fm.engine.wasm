@@ -4,7 +4,6 @@
 
 #include "MeshLoader.h"
 #include "CustomIOSystem.h"
-#include "FBXImporter.h"
 #include "Logger.h"
 #include "components/MeshRenderer.h"
 #include "fmFetch.h"

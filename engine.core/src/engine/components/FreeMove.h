@@ -23,8 +23,7 @@ public:
         return "FREE_MOVE";
     }
 private:
-    void Move( const glm::vec3& direction, float amount );
-
-    float m_speed, m_forwardsVelocity, m_strafeVelocity;
+    void  Move( const glm::vec3& direction, float amount );
+    float m_speed, m_forwardsVelocity, m_strafeVelocity, m_rotateVelocity;
     bool  m_moveForwards, m_sprinting;
 };

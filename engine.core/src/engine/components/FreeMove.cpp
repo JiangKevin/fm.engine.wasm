@@ -27,9 +27,15 @@ void FreeMove::registerWithEngine( Engine* engine )
 {
     auto input = engine->getWindow()->getInput();
     input->registerKeyToAction( SDLK_LSHIFT, "sprint" );
+    input->registerKeyToAction( SDLK_f, "switch_move" );
     input->registerKeysToAxis( SDLK_w, SDLK_s, -1.f, 1.f, "forwards" );
     input->registerKeysToAxis( SDLK_a, SDLK_d, -1.f, 1.f, "strafe" );
 
+    input->bindAction( "switch_move", IE_PRESSED,
+                       [ this ]()
+                       {
+                           m_moveForwards = ! m_moveForwards;
+                       } );
     input->bindAction( "sprint", IE_PRESSED,
                        [ this ]()
                        {

@@ -24,6 +24,6 @@ public:
     }
 private:
     void  Move( const glm::vec3& direction, float amount );
-    float m_speed, m_forwardsVelocity, m_strafeVelocity, m_rotateVelocity;
+    float m_speed, m_forwardsVelocity, m_strafeVelocity, m_rotateVelocity,m_seesawVelocity;
     bool  m_moveForwards, m_sprinting;
 };

@@ -15,6 +15,7 @@ enum fetch_reponse_type
     FETCH_JSON,
     FETCH_BUFFER,
     FETCH_BLOB,
+    FETCH_BLOB_IMAGE,
     FETCH_SVG
 };
 /**/
@@ -33,17 +34,23 @@ struct blob_node
     bool              isload              = false;
     node_draw_type    draw_type           = DRAW_FACE;
     bool              isTexRepeat         = true;
-    string            url                 = "./assets/AncientUgandan.obj";
+    string            url                 = "AncientUgandan.obj";
     string            mould_file_type     = "OBJ";
     string            uuid                = "";
     int               assimpOptimizeFlags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace;
 };
-
+/**/
+struct blob_image
+{
+    string                     url = "AncientUgandan.png";
+    std::shared_ptr< Texture > texture_ptr;
+};
 /**/
 struct fecthRequest
 {
     fetch_reponse_type dataType;
     blob_node*         bn_ptr;
+    blob_image*        bi_ptr;
 };
 /**/
 void downloadSucceeded( emscripten_fetch_t* fetch )
@@ -65,17 +72,17 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
             else
             {
                 // 加载场景资源
-                user_data->bn_ptr->ml_ptr->loadScene( scene, user_data->bn_ptr->url );
-                /**/
-                // 添加默认的坐标与碰撞信息
-                user_data->bn_ptr->ml_ptr->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
-                user_data->bn_ptr->ml_ptr->getEntity()->addComponent< SphereCollider >( 1, 1 );
-                user_data->bn_ptr->game_ptr->addToScene( user_data->bn_ptr->ml_ptr->getEntity() );
+                user_data->bn_ptr->ml_ptr->loadScene( scene, user_data->bn_ptr->url, true );
+                // /**/
+                // // 添加默认的坐标与碰撞信息
+                // user_data->bn_ptr->ml_ptr->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
+                // user_data->bn_ptr->ml_ptr->getEntity()->addComponent< SphereCollider >( 1, 1 );
+                // user_data->bn_ptr->game_ptr->addToScene( user_data->bn_ptr->ml_ptr->getEntity() );
             }
         }
     }
     /**/
-    if ( user_data->dataType == FETCH_SVG )
+    if ( user_data->dataType == FETCH_BLOB_IMAGE )
     {
     }
     /**/
@@ -103,5 +110,10 @@ void create_http_fetch( fecthRequest* arg )
     if ( arg->dataType == FETCH_BLOB )
     {
         emscripten_fetch( &attr, arg->bn_ptr->url.c_str() );
+    }
+    /**/
+    if ( arg->dataType == FETCH_BLOB_IMAGE )
+    {
+        emscripten_fetch( &attr, arg->bi_ptr->url.c_str() );
     }
 }

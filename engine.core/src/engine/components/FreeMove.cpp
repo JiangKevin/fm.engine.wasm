@@ -19,7 +19,7 @@ FreeMove::FreeMove( bool moveForwards, float speed )
     setProperty( "speed", FLOAT, &m_speed, 0, 20 );
     setProperty( "forwards velocity", FLOAT, &m_forwardsVelocity, -1, 1 );
     setProperty( "strafe velocity", FLOAT, &m_strafeVelocity, -1, 1 );
-    setProperty( "ratate velocity", FLOAT, &m_rotateVelocity, -1, 1 );
+    setProperty( "rotate velocity", FLOAT, &m_rotateVelocity, -1, 1 );
     setProperty( "seesaw velocity", FLOAT, &m_seesawVelocity, -1, 1 );
     setProperty( "forwards", BOOLEAN, &m_moveForwards );
     setProperty( "sprinting", BOOLEAN, &m_sprinting );
@@ -34,8 +34,8 @@ void FreeMove::registerWithEngine( Engine* engine )
     input->registerKeyToAction( SDLK_f, "switch_move" );
     input->registerKeysToAxis( SDLK_w, SDLK_s, -1.f, 1.f, "forwards" );
     input->registerKeysToAxis( SDLK_a, SDLK_d, -1.f, 1.f, "strafe" );
-    input->registerKeysToAxis( SDLK_LEFT, SDLK_RIGHT, -0.5f, 0.5f, "rotates" );
-    input->registerKeysToAxis( SDLK_DOWN, SDLK_UP, -0.5f, 0.5f, "seesaws" );
+    input->registerKeysToAxis( SDLK_LEFT, SDLK_RIGHT, -0.2f, 0.2f, "rotates" );
+    input->registerKeysToAxis( SDLK_DOWN, SDLK_UP, -0.2f, 0.2f, "seesaws" );
     input->bindAction( "switch_move", IE_PRESSED,
                        [ this ]()
                        {

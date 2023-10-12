@@ -23,6 +23,14 @@ EngineIOStream::EngineIOStream( const std::string& fileName, bool fromHttp )
     else
     {
         m_file = new std::fstream( fileName, std::ifstream::binary | std::fstream::in | std::fstream::out );
+        if ( ! m_file )
+        {
+            printf( "From EngineIOStream :++++++++ texture file err(%s)\n", fileName.c_str() );
+        }
+        // else
+        // {
+        //     printf( "From EngineIOStream :++++++++ texture file ok(%s)\n", fileName.c_str() );
+        // }
     }
 
 #else

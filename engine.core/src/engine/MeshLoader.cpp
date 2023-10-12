@@ -24,8 +24,8 @@ MeshLoader::MeshLoader( const std::string file, bool fromHttp, Game* gamePtr, st
 
     if ( MeshLoader::sceneMeshRendererDataCache[ m_fileName ].size() > 0 )
     {
-        m_entity = std::make_shared< Entity >();
-        m_entity->updateTag( m_fileName );
+        m_entity = std::make_shared< Entity >(m_fileName);
+        // m_entity->updateTag( m_fileName );
         for ( auto meshRenderData : MeshLoader::sceneMeshRendererDataCache[ m_fileName ] )
         {
             m_entity->addComponent< MeshRenderer >( meshRenderData.mesh, meshRenderData.material );
@@ -82,8 +82,8 @@ std::shared_ptr< Entity > MeshLoader::getEntity( void ) const
 
 void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp, std::string extension )
 {
-    m_entity = std::make_shared< Entity >();
-    m_entity->updateTag( tag );
+    m_entity = std::make_shared< Entity >(tag);
+    // m_entity->updateTag( tag );
     //
     for ( int i = 0; i < scene->mNumMeshes; i++ )
     {

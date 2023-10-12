@@ -13,10 +13,13 @@ std::map< std::string, std::weak_ptr< TextureData > > m_textureCache;
 Texture::Texture( const Asset& file, GLenum textureTarget, GLfloat filter )
 {
     auto it = m_textureCache.find( file.getIOStream()->getFileName() );
-
+    //
+    printf( "From Texture file(%s)\n", file.getIOStream()->getFileName().c_str() );
+    //
     if ( it == m_textureCache.end() || ! ( m_textureData = it->second.lock() ) )
     {
-        int            x, y, bytesPerPixel;
+        int x, y, bytesPerPixel;
+        //
         unsigned char* data = stbi_load_from_memory( reinterpret_cast< const unsigned char* >( file.read() ), file.getIOStream()->fileSize(), &x, &y, &bytesPerPixel, 4 );
 
         if ( data == NULL )

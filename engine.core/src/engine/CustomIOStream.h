@@ -12,7 +12,7 @@ class CustomIOStream : public Assimp::IOStream
     friend class CustomIOSystem;
 protected:
     // Constructor protected for private usage by CustomIOSystem
-    CustomIOStream( const char* pFile, const char* pMode );
+    CustomIOStream( const char* pFile, const char* pMode ,bool fromHttp=false);
 public:
     ~CustomIOStream( void );
 

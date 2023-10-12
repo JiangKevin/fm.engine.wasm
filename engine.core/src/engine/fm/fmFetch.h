@@ -1,0 +1,202 @@
+#pragma once
+#include "Game.h"
+#include "components/SphereCollider.h"
+#include "fm/wasm_minizip.h"
+#include "zlib.h"
+#include <assert.h>
+#include <assimp/Importer.hpp>
+#include <assimp/postprocess.h>
+#include <emscripten/fetch.h>
+#include <emscripten/wasmfs.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <iostream>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+/**/
+using namespace std;
+/**/
+enum fetch_reponse_type
+{
+    FETCH_TEXT,
+    FETCH_JSON,
+    FETCH_BUFFER,
+    FETCH_BLOB,
+    FETCH_BLOB_IMAGE,
+    FETCH_SVG,
+    FETCH_ZIP
+};
+/**/
+enum node_draw_type
+{
+    DRAW_FACE,
+    DRAW_VERTICE,
+    DRAW_WIREFRAME
+};
+/**/
+struct blob_node
+{
+    Game*             game_ptr;
+    Assimp::Importer* importer;
+    MeshLoader*       ml_ptr;
+    bool              isload              = false;
+    node_draw_type    draw_type           = DRAW_FACE;
+    bool              isTexRepeat         = true;
+    string            url                 = "AncientUgandan.obj";
+    string            fileName            = "monkey3";
+    string            mould_file_type     = "obj";
+    string            uuid                = "";
+    int               assimpOptimizeFlags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace;
+};
+/**/
+struct blob_image
+{
+    string                     url = "AncientUgandan.png";
+    std::shared_ptr< Texture > texture_ptr;
+};
+/**/
+void create_file( const char* path, const char* buffer, int size, int mode )
+{
+    int fd = open( path, O_WRONLY | O_CREAT | O_EXCL, mode );
+    assert( fd >= 0 );
+    int err = write( fd, buffer, size );
+    close( fd );
+}
+/**/
+struct fecthRequest
+{
+    fetch_reponse_type dataType;
+    blob_node*         bn_ptr;
+    blob_image*        bi_ptr;
+};
+/**/
+void downloadSucceeded( emscripten_fetch_t* fetch )
+{
+    char* str_blob = ( char* )malloc( fetch->numBytes * sizeof( char ) );
+    memcpy( str_blob, fetch->data, fetch->numBytes );
+    /**/
+    fecthRequest* user_data = ( fecthRequest* )fetch->userData;
+    if ( user_data->dataType == FETCH_BLOB )
+    {
+        if ( user_data->bn_ptr->mould_file_type == "OBJ" )
+        {
+            // const aiScene*   scene = importer.ReadFile( file, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace );
+            const aiScene* scene = user_data->bn_ptr->importer->ReadFileFromMemory( ( char* )str_blob, fetch->numBytes, user_data->bn_ptr->assimpOptimizeFlags );
+            if ( ! scene )
+            {
+                log_err( "Failed to load mesh: %s", user_data->bn_ptr->url.c_str() );
+            }
+            else
+            {
+                // 加载场景资源
+                user_data->bn_ptr->ml_ptr->loadScene( scene, user_data->bn_ptr->url, true );
+                // /**/
+                // // 添加默认的坐标与碰撞信息
+                // user_data->bn_ptr->ml_ptr->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
+                // user_data->bn_ptr->ml_ptr->getEntity()->addComponent< SphereCollider >( 1, 1 );
+                // user_data->bn_ptr->game_ptr->addToScene( user_data->bn_ptr->ml_ptr->getEntity() );
+            }
+        }
+    }
+    /**/
+    if ( user_data->dataType == FETCH_BLOB_IMAGE )
+    {
+    }
+    /**/
+    if ( user_data->dataType == FETCH_ZIP )
+    {
+        char  cwd[ 100 ];
+        char* ret;
+        chdir( "/temp" );
+        ret = getcwd( cwd, sizeof( cwd ) );
+        assert( ret == cwd );
+        printf( "Current working dir: %s\n", cwd );
+        //
+        char zip_name_no_ext[ 100 ] = "";
+        sprintf( zip_name_no_ext, "%s.zip", user_data->bn_ptr->fileName.c_str() );
+        create_file( zip_name_no_ext, fetch->data, fetch->numBytes, 0777 );
+        int result = access( "/temp/monkey3.zip", F_OK );
+        printf( "Current file is ok? %d\n", result );
+
+        //
+        char* out_folder      = ( char* )malloc( sizeof( char ) * 1024 );
+        char* inZipPath       = ( char* )malloc( sizeof( char ) * 1024 );
+        char* model_file_name = ( char* )malloc( sizeof( char ) * 1024 );
+        sprintf( out_folder, "/temp/%s", user_data->bn_ptr->fileName.c_str() );
+        sprintf( inZipPath, "/temp/%s.zip", user_data->bn_ptr->fileName.c_str() );
+        //
+        const char* cmd_par[] = { "./fm_zip", "-x", "-o", "-d", out_folder, inZipPath };
+        int         is_zip_ok = zip_tool_entrance( 6, cmd_par );
+        //
+
+        if ( is_zip_ok == 0 )
+        {
+            sprintf( model_file_name, "/temp/%s/%s.%s", user_data->bn_ptr->fileName.c_str(), user_data->bn_ptr->fileName.c_str(), user_data->bn_ptr->mould_file_type.c_str() );
+            result = access( model_file_name, F_OK );
+            printf( "unzip file(%s) is ok? %d\n", model_file_name, result );
+            //
+            const aiScene* scene = user_data->bn_ptr->importer->ReadFile( model_file_name, user_data->bn_ptr->assimpOptimizeFlags );
+            if ( ! scene )
+            {
+                log_err( "Failed to load mesh: %s", model_file_name );
+            }
+            else
+            {
+                log_info( "load mesh: %s", model_file_name );
+                // 加载场景资源
+                // chdir( "/temp" );
+                user_data->bn_ptr->ml_ptr->loadScene( scene, model_file_name, true );
+                /**/
+                // 添加默认的坐标与碰撞信息
+                user_data->bn_ptr->ml_ptr->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
+                user_data->bn_ptr->ml_ptr->getEntity()->addComponent< SphereCollider >( 1, 1 );
+                user_data->bn_ptr->game_ptr->addToScene( user_data->bn_ptr->ml_ptr->getEntity() );
+            }
+        }
+        // 释放内存
+        free( out_folder );
+        free( inZipPath );
+        free( model_file_name );
+    }
+    /**/
+    free( str_blob );
+    /**/
+    emscripten_fetch_close( fetch );
+}
+
+void downloadFailed( emscripten_fetch_t* fetch )
+{
+    emscripten_fetch_close( fetch );
+}
+
+void create_http_fetch( fecthRequest* arg )
+{
+    emscripten_fetch_attr_t attr;
+    emscripten_fetch_attr_init( &attr );
+    strcpy( attr.requestMethod, "GET" );
+    attr.attributes = EMSCRIPTEN_FETCH_LOAD_TO_MEMORY | EMSCRIPTEN_FETCH_PERSIST_FILE;
+    attr.onsuccess  = downloadSucceeded;
+    attr.onerror    = downloadFailed;
+    /*将自定义的变量注入结构体*/
+    attr.userData = arg;
+    /**/
+    if ( arg->dataType == FETCH_BLOB )
+    {
+        emscripten_fetch( &attr, arg->bn_ptr->url.c_str() );
+    }
+    /**/
+    if ( arg->dataType == FETCH_BLOB_IMAGE )
+    {
+        emscripten_fetch( &attr, arg->bi_ptr->url.c_str() );
+    }
+    /**/
+    if ( arg->dataType == FETCH_ZIP )
+    {
+        emscripten_fetch( &attr, arg->bn_ptr->url.c_str() );
+    }
+}

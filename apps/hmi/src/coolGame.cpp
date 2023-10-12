@@ -1,4 +1,9 @@
 #include "coolGame.h"
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <vector>
 //
 void CoolGame::update( Input* input, std::chrono::microseconds delta )
 {
@@ -7,6 +12,15 @@ void CoolGame::update( Input* input, std::chrono::microseconds delta )
 
 void CoolGame::init( GLManager* glManager )
 {
+
+    char  cwd[ 100 ];
+    char* ret;
+    // chdir( "assets" );
+    mkdir( "temp", 0777 );
+    ret = getcwd( cwd, sizeof( cwd ) );
+    assert( ret == cwd );
+    printf( "From wasm: Current working dir: %s\n", cwd );
+
     // 隐藏原生ui
     auto m_gui = getEngine()->getWindow()->getGuiManager();
     m_gui->togglePropertyEditor();
@@ -159,12 +173,6 @@ void CoolGame::init( GLManager* glManager )
         addToScene( plane );
     }
 
-    /*{
-      MeshLoader ml("Pregnant.obj");
-      ml.getEntity()->getTransform().setPosition(glm::vec3(0 + (i * 3), -2,
-    -2.5)); ml.getEntity()->addComponent<Sphere>(1); addToScene(ml.getEntity());
-    }*/
-
     for ( int i = 0; i < 10; i++ )
     {
         MeshLoader ml( "AncientUgandan.obj" );
@@ -173,7 +181,7 @@ void CoolGame::init( GLManager* glManager )
         addToScene( ml.getEntity() );
     }
 
-    MeshLoader money( "monkey3.obj", true, this );
+    MeshLoader money( "monkey3", true, this, "obj" );
     // money.getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
     // money.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.05f, 100.0f );
     // money.getEntity()->addComponent< SphereCollider >( 1, 1 );

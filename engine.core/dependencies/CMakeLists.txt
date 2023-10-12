@@ -186,3 +186,18 @@ set(BUILD_BULLET2_DEMOS OFF CACHE BOOL "no bullet2 demos.")
 set(BUILD_CPU_DEMOS OFF CACHE BOOL "no bullet demos.")
 set(BUILD_BULLET3 OFF CACHE BOOL "no bullet 3.")
 add_subdirectory(bullet3)
+
+# add minizip-ng
+# add_definitions(-DMZ_FETCH_LIBS=ON)
+# add_definitions(-DMZ_LZMA=OFF)
+# add_definitions(-DMZ_ZSTD=OFF)
+# add_definitions(-DMZ_OPENSSL=OFF)
+#
+set(MZ_FETCH_LIBS ON CACHE BOOL "Build MZ_FETCH_LIBS")
+set(MZ_LZMA OFF CACHE BOOL "Build MZ_LZMA")
+set(MZ_ZSTD OFF CACHE BOOL "Build MZ_ZSTD")
+set(MZ_OPENSSL OFF CACHE BOOL "Build MZ_OPENSSL")
+# set(MZ_BZIP2 OFF CACHE BOOL "Build DMZ_BZIP2")
+
+#
+add_subdirectory(minizip-ng)

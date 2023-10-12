@@ -5,20 +5,18 @@
 #include "MeshRenderer.h"
 #include <iostream>
 
-MeshRenderer::MeshRenderer(std::shared_ptr<Mesh> mesh, std::shared_ptr<Material> material)
+MeshRenderer::MeshRenderer( std::shared_ptr< Mesh > mesh, std::shared_ptr< Material > material )
 {
-  this->m_mesh = mesh;
-  this->m_material = material;
+    this->m_mesh     = mesh;
+    this->m_material = material;
 }
 
-MeshRenderer::~MeshRenderer(void)
-{
-}
+MeshRenderer::~MeshRenderer( void ) {}
 
-void MeshRenderer::render(Shader *shader)
+void MeshRenderer::render( Shader* shader )
 {
-  shader->setUniformMatrix4f("World", m_parentEntity->getWorldMatrix());
+    shader->setUniformMatrix4f( "World", m_parentEntity->getWorldMatrix() );
 
-  m_material->bind();
-  m_mesh->render();
+    m_material->bind();
+    m_mesh->render();
 }

@@ -8,7 +8,10 @@
 #include <string>
 // #include <unistd.h>
 
-CustomIOSystem::CustomIOSystem( void ) {}
+CustomIOSystem::CustomIOSystem( bool fromHttp )
+{
+    is_fromHttp = fromHttp;
+}
 CustomIOSystem::~CustomIOSystem( void ) {}
 
 bool CustomIOSystem::ComparePaths( const char* one, const char* second ) const
@@ -45,7 +48,7 @@ char CustomIOSystem::getOsSeparator( void ) const
 
 Assimp::IOStream* CustomIOSystem::Open( const char* pFile, const char* pMode )
 {
-    return new CustomIOStream( pFile, pMode );
+    return new CustomIOStream( pFile, pMode, is_fromHttp );
 }
 
 void CustomIOSystem::Close( Assimp::IOStream* pFile )

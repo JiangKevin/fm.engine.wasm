@@ -5,9 +5,9 @@
 #include "CustomIOStream.h"
 #include <string>
 
-CustomIOStream::CustomIOStream( const char* pFile, const char* pMode )
+CustomIOStream::CustomIOStream( const char* pFile, const char* pMode, bool fromHttp )
 {
-    m_iostream = new EngineIOStream( std::string( pFile ) );
+    m_iostream = new EngineIOStream( std::string( pFile ), fromHttp );
 }
 
 CustomIOStream::~CustomIOStream( void )

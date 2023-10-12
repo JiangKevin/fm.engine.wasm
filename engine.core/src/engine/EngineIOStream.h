@@ -23,7 +23,7 @@ enum origin
 class EngineIOStream
 {
 public:
-    EngineIOStream( const std::string& fileName );
+    EngineIOStream( const std::string& fileName ,bool fromHttp=false);
     ~EngineIOStream( void );
 
     size_t read( void* pvBuffer, size_t pSize, size_t pCount );

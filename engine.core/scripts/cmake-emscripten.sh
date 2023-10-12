@@ -11,8 +11,8 @@ mkdir -p $DIR/bin-emscripten
 mkdir -p $DIR/bin-emscripten/bin/
 cp $DIR/engine.core/src/example/html/index.html $DIR/bin-emscripten/bin/
 #
-
-emcmake cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -S $DIR/engine.core -B $DIR/bin-emscripten
+#  -DMZ_BZIP2=OFF
+emcmake cmake -DCMAKE_BUILD_TYPE=$BUILD_TYPE -S $DIR/engine.core -B $DIR/bin-emscripten -DMZ_FETCH_LIBS=ON -DMZ_LZMA=OFF -DMZ_ZSTD=OFF -DMZ_OPENSSL=OFF -DMZ_BZIP2=OFF
 # 
 cd $DIR/bin-emscripten
 make

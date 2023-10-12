@@ -4,9 +4,9 @@
 
 #include "Asset.h"
 
-Asset::Asset( const std::string& fileName )
+Asset::Asset( const std::string& fileName, bool fromHttp )
 {
-    m_ioStream             = new EngineIOStream( fileName );
+    m_ioStream             = new EngineIOStream( fileName, fromHttp );
     m_fileSize             = m_ioStream->fileSize();
     m_buffer               = new char[ m_fileSize + 1 ];
     m_buffer[ m_fileSize ] = '\0';

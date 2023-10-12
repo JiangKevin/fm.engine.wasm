@@ -4,9 +4,10 @@
 
 #include "MeshLoader.h"
 #include "CustomIOSystem.h"
+#include "FBXImporter.h"
 #include "Logger.h"
 #include "components/MeshRenderer.h"
-#include "fmFetch.h"
+#include "fm/fmFetch.h"
 #include <algorithm>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -32,7 +33,6 @@ MeshLoader::MeshLoader( const std::string file, bool fromHttp, Game* gamePtr, st
     }
     else
     {
-
         // 验证来源
         if ( fromHttp == false )
         {
@@ -55,16 +55,18 @@ MeshLoader::MeshLoader( const std::string file, bool fromHttp, Game* gamePtr, st
             log_info( "Loading mesh: %s From http", file.c_str() );
             /**/
             Assimp::Importer* importer = new Assimp::Importer();
-            blob_node*        bn_ptr   = new blob_node();
-            bn_ptr->game_ptr           = game_ptr;
-            bn_ptr->ml_ptr             = this;
-            bn_ptr->url                = "./assets/" + m_fileName;
-            bn_ptr->importer           = importer;
-            bn_ptr->mould_file_type    = "OBJ";
+            importer->SetIOHandler( new CustomIOSystem( true ) );
+            blob_node* bn_ptr       = new blob_node();
+            bn_ptr->game_ptr        = game_ptr;
+            bn_ptr->ml_ptr          = this;
+            bn_ptr->url             = "./assets/" + m_fileName + ".zip";
+            bn_ptr->fileName        = m_fileName;
+            bn_ptr->importer        = importer;
+            bn_ptr->mould_file_type = "obj";
             /**/
             fecthRequest* mRequest = new fecthRequest();
             mRequest->bn_ptr       = bn_ptr;
-            mRequest->dataType     = FETCH_BLOB;
+            mRequest->dataType     = FETCH_ZIP;
             /***/
             create_http_fetch( mRequest );
         }
@@ -82,6 +84,7 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
 {
     m_entity = std::make_shared< Entity >();
     m_entity->updateTag( tag );
+    //
     for ( int i = 0; i < scene->mNumMeshes; i++ )
     {
         const aiMesh* model = scene->mMeshes[ i ];
@@ -110,123 +113,82 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
             indices.push_back( face.mIndices[ 2 ] );
         }
 
-        // 当从文件系统获取时候
-        if ( fromHttp == false )  // From filesystem
+        const aiMaterial* pMaterial = scene->mMaterials[ model->mMaterialIndex ];
+        log_info( "tex num: %s,%i From filesystem", tag.c_str(), model->mMaterialIndex );
+        /**/
+        std::shared_ptr< Texture > diffuseMap;
+        std::shared_ptr< Texture > normalMap;
+        std::shared_ptr< Texture > specularMap;
+        aiString                   Path;
+        char                       new_path[ 2048 ] = "";
+        /**/
+        if ( pMaterial->GetTextureCount( aiTextureType_DIFFUSE ) > 0 && pMaterial->GetTexture( aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL ) == AI_SUCCESS )
         {
-            const aiMaterial* pMaterial = scene->mMaterials[ model->mMaterialIndex ];
-            log_info( "tex num: %s,%i From filesystem", tag.c_str(), model->mMaterialIndex );
-            /**/
-            std::shared_ptr< Texture > diffuseMap;
-            std::shared_ptr< Texture > normalMap;
-            std::shared_ptr< Texture > specularMap;
-            aiString                   Path;
-            /**/
-            if ( pMaterial->GetTextureCount( aiTextureType_DIFFUSE ) > 0 && pMaterial->GetTexture( aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL ) == AI_SUCCESS )
+
+            if ( fromHttp == false )  // From filesystem
             {
                 log_info( "diffuseMap tex path: %s From filesystem", Path.data );
                 diffuseMap = std::make_shared< Texture >( Asset( Path.data ) );
             }
             else
             {
-                diffuseMap = std::make_shared< Texture >( Asset( "default_normal.jpg" ) );
+                log_info( "diffuseMap tex path: %s From Http", Path.data );
+                sprintf( new_path, "/temp/monkey3/%s", Path.data );
+                diffuseMap = std::make_shared< Texture >( Asset( Path.data ), true );
             }
+        }
+        else
+        {
+            diffuseMap = std::make_shared< Texture >( Asset( "default_normal.jpg" ) );
+        }
 
-            if ( pMaterial->GetTextureCount( aiTextureType_HEIGHT ) > 0 && pMaterial->GetTexture( aiTextureType_HEIGHT, 0, &Path, NULL, NULL, NULL, NULL, NULL ) == AI_SUCCESS )
+        if ( pMaterial->GetTextureCount( aiTextureType_HEIGHT ) > 0 && pMaterial->GetTexture( aiTextureType_HEIGHT, 0, &Path, NULL, NULL, NULL, NULL, NULL ) == AI_SUCCESS )
+        {
+            if ( fromHttp == false )  // From filesystem
             {
                 log_info( "normalMap tex path: %s From filesystem", Path.data );
                 normalMap = std::make_shared< Texture >( Asset( Path.data ) );
             }
             else
             {
-                normalMap = std::make_shared< Texture >( Asset( "default_normal.jpg" ) );
+                log_info( "normalMap tex path: %s From http", Path.data );
+                sprintf( new_path, "/temp/monkey3/%s", Path.data );
+                normalMap = std::make_shared< Texture >( Asset( Path.data ), true );
             }
+        }
+        else
+        {
+            normalMap = std::make_shared< Texture >( Asset( Path.data ) );
+        }
 
-            if ( pMaterial->GetTextureCount( aiTextureType_SPECULAR ) > 0 && pMaterial->GetTexture( aiTextureType_SPECULAR, 0, &Path, NULL, NULL, NULL, NULL, NULL ) == AI_SUCCESS )
+        if ( pMaterial->GetTextureCount( aiTextureType_SPECULAR ) > 0 && pMaterial->GetTexture( aiTextureType_SPECULAR, 0, &Path, NULL, NULL, NULL, NULL, NULL ) == AI_SUCCESS )
+        {
+            if ( fromHttp == false )  // From filesystem
             {
                 log_info( "specularMap tex path: %s From filesystem", Path.data );
                 specularMap = std::make_shared< Texture >( Asset( Path.data ) );
             }
             else
             {
-                specularMap = std::make_shared< Texture >( Asset( "default_specular.jpg" ) );
-            }
-
-            MeshRendererData meshRenderData;
-            //
-            if ( ( vertices.size() > 0 ) && ( indices.size() > 0 ) )
-            {
-                meshRenderData.mesh = std::make_shared< Mesh >( m_fileName + std::string( model->mName.C_Str() ), &vertices[ 0 ], vertices.size(), &indices[ 0 ], indices.size() );
-                //
-                meshRenderData.material = std::make_shared< Material >( diffuseMap, normalMap, specularMap );
-                MeshLoader::sceneMeshRendererDataCache[ m_fileName ].push_back( meshRenderData );
-                m_entity->addComponent< MeshRenderer >( meshRenderData.mesh, meshRenderData.material );
+                log_info( "specularMap tex path: %s From http", Path.data );
+                sprintf( new_path, "/temp/monkey3/%s", Path.data );
+                specularMap = std::make_shared< Texture >( Asset( Path.data ), true );
             }
         }
-        else  // From http
+        else
         {
-             // Handle material info
-            const aiMaterial* pMaterial = scene->mMaterials[ model->mMaterialIndex ];
-            log_info( "tex num: %s,%i From http", tag.c_str(), model->mMaterialIndex );
-            /**/
-            std::shared_ptr< Texture > diffuseMap;
-            std::shared_ptr< Texture > normalMap;
-            std::shared_ptr< Texture > specularMap;
-            aiString                   Path;
-            /**/
-            log_info( "TextureCount: %i From http", pMaterial->GetTextureCount( aiTextureType_DIFFUSE ) );
-            //
-            if ( pMaterial->GetTexture( aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL ) == AI_SUCCESS )
-            {
-                log_info( "diffuseMap tex path: %s From http", Path.data );
-
-                //
-                blob_image* bi_ptr  = new blob_image();
-                bi_ptr->url         = Path.data;
-                bi_ptr->texture_ptr = diffuseMap;
-                /**/
-                fecthRequest* mRequest = new fecthRequest();
-                mRequest->bi_ptr       = bi_ptr;
-                mRequest->dataType     = FETCH_BLOB_IMAGE;
-                /***/
-                create_http_fetch( mRequest );
-
-                diffuseMap = std::make_shared< Texture >( Asset( Path.data ) );
-            }
-            else
-            {
-                diffuseMap = std::make_shared< Texture >( Asset( "default_normal.jpg" ) );
-            }
-
-            if ( pMaterial->GetTextureCount( aiTextureType_HEIGHT ) > 0 && pMaterial->GetTexture( aiTextureType_HEIGHT, 0, &Path, NULL, NULL, NULL, NULL, NULL ) == AI_SUCCESS )
-            {
-                log_info( "normalMap tex path: %s From http", Path.data );
-                normalMap = std::make_shared< Texture >( Asset( Path.data ) );
-            }
-            else
-            {
-                normalMap = std::make_shared< Texture >( Asset( "default_normal.jpg" ) );
-            }
-
-            if ( pMaterial->GetTextureCount( aiTextureType_SPECULAR ) > 0 && pMaterial->GetTexture( aiTextureType_SPECULAR, 0, &Path, NULL, NULL, NULL, NULL, NULL ) == AI_SUCCESS )
-            {
-                log_info( "specularMap tex path: %s From http", Path.data );
-                specularMap = std::make_shared< Texture >( Asset( Path.data ) );
-            }
-            else
-            {
-                specularMap = std::make_shared< Texture >( Asset( "default_specular.jpg" ) );
-            }
-
-            MeshRendererData meshRenderData;
-            //
-            // if ( ( vertices.size() > 0 ) && ( indices.size() > 0 ) )
-            // {
+            specularMap = std::make_shared< Texture >( Asset( "default_specular.jpg" ) );
+        }
+        //
+        MeshRendererData meshRenderData;
+        //
+        if ( ( vertices.size() > 0 ) && ( indices.size() > 0 ) )
+        {
             meshRenderData.mesh = std::make_shared< Mesh >( m_fileName + std::string( model->mName.C_Str() ), &vertices[ 0 ], vertices.size(), &indices[ 0 ], indices.size() );
             //
             meshRenderData.material = std::make_shared< Material >( diffuseMap, normalMap, specularMap );
             MeshLoader::sceneMeshRendererDataCache[ m_fileName ].push_back( meshRenderData );
             m_entity->addComponent< MeshRenderer >( meshRenderData.mesh, meshRenderData.material );
-            // }
         }
     }
 }

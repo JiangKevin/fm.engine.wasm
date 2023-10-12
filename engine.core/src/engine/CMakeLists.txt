@@ -12,6 +12,8 @@ file(GLOB TARGET_INC_COMPONENTS ${CMAKE_CURRENT_SOURCE_DIR}/components/*.h)
 file(GLOB TARGET_SRC
   ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
   ${CMAKE_CURRENT_SOURCE_DIR}/*.c
+  ${CMAKE_CURRENT_SOURCE_DIR}/fm/*.cpp
+  ${CMAKE_CURRENT_SOURCE_DIR}/fm/*.c
 )
 
 file(GLOB TARGET_SRC_COMPONENTS
@@ -36,6 +38,8 @@ ELSE()
 ENDIF()
 
 target_link_libraries(engine ${ENGINE_LIBS})
+
+# target_link_libraries(engine PRIVATE ZLIB::ZLIB MINIZIP::minizip)
 set_target_properties(engine PROPERTIES COTIRE_CXX_PREFIX_HEADER_INIT "stdafx.h")
 cotire(engine)
 

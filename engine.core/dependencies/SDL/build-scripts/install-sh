@@ -97,60 +97,82 @@ Environment variables override the default commands:
 
 while test -n "$1"; do
   case $1 in
-    -c) shift
-        continue;;
+  -c)
+    shift
+    continue
+    ;;
 
-    -d) dir_arg=true
-        shift
-        continue;;
+  -d)
+    dir_arg=true
+    shift
+    continue
+    ;;
 
-    -g) chgrpcmd="$chgrpprog $2"
-        shift
-        shift
-        continue;;
+  -g)
+    chgrpcmd="$chgrpprog $2"
+    shift
+    shift
+    continue
+    ;;
 
-    --help) echo "$usage"; exit $?;;
+  --help)
+    echo "$usage"
+    exit $?
+    ;;
 
-    -m) chmodcmd="$chmodprog $2"
-        shift
-        shift
-        continue;;
+  -m)
+    chmodcmd="$chmodprog $2"
+    shift
+    shift
+    continue
+    ;;
 
-    -o) chowncmd="$chownprog $2"
-        shift
-        shift
-        continue;;
+  -o)
+    chowncmd="$chownprog $2"
+    shift
+    shift
+    continue
+    ;;
 
-    -s) stripcmd=$stripprog
-        shift
-        continue;;
+  -s)
+    stripcmd=$stripprog
+    shift
+    continue
+    ;;
 
-    -t) dstarg=$2
-	shift
-	shift
-	continue;;
+  -t)
+    dstarg=$2
+    shift
+    shift
+    continue
+    ;;
 
-    -T) no_target_directory=true
-	shift
-	continue;;
+  -T)
+    no_target_directory=true
+    shift
+    continue
+    ;;
 
-    --version) echo "$0 $scriptversion"; exit $?;;
+  --version)
+    echo "$0 $scriptversion"
+    exit $?
+    ;;
 
-    *)  # When -d is used, all remaining arguments are directories to create.
-	# When -t is used, the destination is already specified.
-	test -n "$dir_arg$dstarg" && break
-        # Otherwise, the last argument is the destination.  Remove it from $@.
-	for arg
-	do
-          if test -n "$dstarg"; then
-	    # $@ is not empty: it contains at least $arg.
-	    set fnord "$@" "$dstarg"
-	    shift # fnord
-	  fi
-	  shift # arg
-	  dstarg=$arg
-	done
-	break;;
+  *) # When -d is used, all remaining arguments are directories to create.
+    # When -t is used, the destination is already specified.
+    test -n "$dir_arg$dstarg" && break
+    # Otherwise, the last argument is the destination.  Remove it from $@.
+    for arg; do
+      if test -n "$dstarg"; then
+        # $@ is not empty: it contains at least $arg.
+        set fnord "$@" "$dstarg"
+        shift # fnord
+      fi
+      shift # arg
+      dstarg=$arg
+    done
+    break
+    ;;
   esac
 done
 
@@ -164,11 +186,10 @@ if test -z "$1"; then
   exit 0
 fi
 
-for src
-do
+for src; do
   # Protect names starting with `-'.
   case $src in
-    -*) src=./$src ;;
+  -*) src=./$src ;;
   esac
 
   if test -n "$dir_arg"; then
@@ -198,22 +219,22 @@ do
     dst=$dstarg
     # Protect names starting with `-'.
     case $dst in
-      -*) dst=./$dst ;;
+    -*) dst=./$dst ;;
     esac
 
     # If destination is a directory, append the input filename; won't work
     # if double slashes aren't ignored.
     if test -d "$dst"; then
       if test -n "$no_target_directory"; then
-	echo "$0: $dstarg: Is a directory" >&2
-	exit 1
+        echo "$0: $dstarg: Is a directory" >&2
+        exit 1
       fi
-      dst=$dst/`basename "$src"`
+      dst=$dst/$(basename "$src")
     fi
   fi
 
   # This sed command emulates the dirname command.
-  dstdir=`echo "$dst" | sed -e 's,/*$,,;s,[^/]*$,,;s,/*$,,;s,^$,.,'`
+  dstdir=$(echo "$dst" | sed -e 's,/*$,,;s,[^/]*$,,;s,/*$,,;s,^$,.,')
 
   # Make sure that the destination directory exists.
 
@@ -226,35 +247,35 @@ do
     oIFS=$IFS
     # Some sh's can't handle IFS=/ for some reason.
     IFS='%'
-    set x `echo "$dstdir" | sed -e 's@/@%@g' -e 's@^%@/@'`
+    set x $(echo "$dstdir" | sed -e 's@/@%@g' -e 's@^%@/@')
     shift
     IFS=$oIFS
 
     pathcomp=
 
-    while test $# -ne 0 ; do
+    while test $# -ne 0; do
       pathcomp=$pathcomp$1
       shift
       if test ! -d "$pathcomp"; then
         $mkdirprog "$pathcomp"
-	# mkdir can fail with a `File exist' error in case several
-	# install-sh are creating the directory concurrently.  This
-	# is OK.
-	test -d "$pathcomp" || exit
+        # mkdir can fail with a `File exist' error in case several
+        # install-sh are creating the directory concurrently.  This
+        # is OK.
+        test -d "$pathcomp" || exit
       fi
       pathcomp=$pathcomp/
     done
   fi
 
   if test -n "$dir_arg"; then
-    $doit $mkdircmd "$dst" \
-      && { test -z "$chowncmd" || $doit $chowncmd "$dst"; } \
-      && { test -z "$chgrpcmd" || $doit $chgrpcmd "$dst"; } \
-      && { test -z "$stripcmd" || $doit $stripcmd "$dst"; } \
-      && { test -z "$chmodcmd" || $doit $chmodcmd "$dst"; }
+    $doit $mkdircmd "$dst" &&
+      { test -z "$chowncmd" || $doit $chowncmd "$dst"; } &&
+      { test -z "$chgrpcmd" || $doit $chgrpcmd "$dst"; } &&
+      { test -z "$stripcmd" || $doit $stripcmd "$dst"; } &&
+      { test -z "$chmodcmd" || $doit $chmodcmd "$dst"; }
 
   else
-    dstfile=`basename "$dst"`
+    dstfile=$(basename "$dst")
 
     # Make a couple of temp file names in the proper directory.
     dsttmp=$dstdir/_inst.$$_
@@ -267,52 +288,58 @@ do
     # Copy the file name to the temp name.
     $doit $cpprog "$src" "$dsttmp" &&
 
-    # and set any options; do chmod last to preserve setuid bits.
-    #
-    # If any of these fail, we abort the whole thing.  If we want to
-    # ignore errors from any of these, just make sure not to ignore
-    # errors from the above "$doit $cpprog $src $dsttmp" command.
-    #
-    { test -z "$chowncmd" || $doit $chowncmd "$dsttmp"; } \
-      && { test -z "$chgrpcmd" || $doit $chgrpcmd "$dsttmp"; } \
-      && { test -z "$stripcmd" || $doit $stripcmd "$dsttmp"; } \
-      && { test -z "$chmodcmd" || $doit $chmodcmd "$dsttmp"; } &&
+      # and set any options; do chmod last to preserve setuid bits.
+      #
+      # If any of these fail, we abort the whole thing.  If we want to
+      # ignore errors from any of these, just make sure not to ignore
+      # errors from the above "$doit $cpprog $src $dsttmp" command.
+      #
+      { test -z "$chowncmd" || $doit $chowncmd "$dsttmp"; } &&
+      { test -z "$chgrpcmd" || $doit $chgrpcmd "$dsttmp"; } &&
+      { test -z "$stripcmd" || $doit $stripcmd "$dsttmp"; } &&
+      { test -z "$chmodcmd" || $doit $chmodcmd "$dsttmp"; } &&
 
-    # Now rename the file to the real destination.
-    { $doit $mvcmd -f "$dsttmp" "$dstdir/$dstfile" 2>/dev/null \
-      || {
-	   # The rename failed, perhaps because mv can't rename something else
-	   # to itself, or perhaps because mv is so ancient that it does not
-	   # support -f.
+      # Now rename the file to the real destination.
+      {
+        $doit $mvcmd -f "$dsttmp" "$dstdir/$dstfile" 2>/dev/null ||
+          {
+            # The rename failed, perhaps because mv can't rename something else
+            # to itself, or perhaps because mv is so ancient that it does not
+            # support -f.
 
-	   # Now remove or move aside any old file at destination location.
-	   # We try this two ways since rm can't unlink itself on some
-	   # systems and the destination file might be busy for other
-	   # reasons.  In this case, the final cleanup might fail but the new
-	   # file should still install successfully.
-	   {
-	     if test -f "$dstdir/$dstfile"; then
-	       $doit $rmcmd -f "$dstdir/$dstfile" 2>/dev/null \
-	       || $doit $mvcmd -f "$dstdir/$dstfile" "$rmtmp" 2>/dev/null \
-	       || {
-		 echo "$0: cannot unlink or rename $dstdir/$dstfile" >&2
-		 (exit 1); exit 1
-	       }
-	     else
-	       :
-	     fi
-	   } &&
+            # Now remove or move aside any old file at destination location.
+            # We try this two ways since rm can't unlink itself on some
+            # systems and the destination file might be busy for other
+            # reasons.  In this case, the final cleanup might fail but the new
+            # file should still install successfully.
+            {
+              if test -f "$dstdir/$dstfile"; then
+                $doit $rmcmd -f "$dstdir/$dstfile" 2>/dev/null ||
+                  $doit $mvcmd -f "$dstdir/$dstfile" "$rmtmp" 2>/dev/null ||
+                  {
+                    echo "$0: cannot unlink or rename $dstdir/$dstfile" >&2
+                    (exit 1)
+                    exit 1
+                  }
+              else
+                :
+              fi
+            } &&
 
-	   # Now rename the file to the real destination.
-	   $doit $mvcmd "$dsttmp" "$dstdir/$dstfile"
-	 }
-    }
-  fi || { (exit 1); exit 1; }
+              # Now rename the file to the real destination.
+              $doit $mvcmd "$dsttmp" "$dstdir/$dstfile"
+          }
+      }
+  fi || {
+    (exit 1)
+    exit 1
+  }
 done
 
 # The final little trick to "correctly" pass the exit status to the exit trap.
 {
-  (exit 0); exit 0
+  (exit 0)
+  exit 0
 }
 
 # Local variables:

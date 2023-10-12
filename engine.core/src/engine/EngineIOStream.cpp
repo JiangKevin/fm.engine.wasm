@@ -10,13 +10,21 @@
     #include <whereami.h>
 #endif
 
-EngineIOStream::EngineIOStream( const std::string& fileName )
+EngineIOStream::EngineIOStream( const std::string& fileName, bool fromHttp )
 {
     m_fileName = fileName;
 #ifdef ANDROID
     m_file = AAssetManager_open( AndroidAssetManager::getAssetManager(), fileName.c_str(), AASSET_MODE_UNKNOWN );
 #elif EMSCRIPTEN
-    m_file = new std::fstream( ASSET_DIR + fileName, std::ifstream::binary | std::fstream::in | std::fstream::out );
+    if ( fromHttp == false )
+    {
+        m_file = new std::fstream( ASSET_DIR + fileName, std::ifstream::binary | std::fstream::in | std::fstream::out );
+    }
+    else
+    {
+        m_file = new std::fstream( fileName, std::ifstream::binary | std::fstream::in | std::fstream::out );
+    }
+
 #else
     int   length = wai_getExecutablePath( NULL, 0, NULL );
     char* path   = new char[ length + 1 ];

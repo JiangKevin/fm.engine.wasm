@@ -135,7 +135,14 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
         {
             sprintf( model_file_name, "/temp/%s/%s.%s", user_data->bn_ptr->fileName.c_str(), user_data->bn_ptr->fileName.c_str(), user_data->bn_ptr->mould_file_type.c_str() );
             int result = access( model_file_name, F_OK );
-            printf( "unzip file(%s) is ok? %d\n", model_file_name, result );
+            if ( result == 0 )
+            {
+                printf( "unzip file(%s) is ok \n", model_file_name );
+            }
+            else
+            {
+                printf( "unzip file(%s) is noe ok !!!! \n", model_file_name );
+            }
             //
             const aiScene* scene = user_data->bn_ptr->importer->ReadFile( model_file_name, user_data->bn_ptr->assimpOptimizeFlags );
             if ( ! scene )
@@ -148,11 +155,11 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
                 // 加载场景资源
                 // chdir( "/temp" );
                 user_data->bn_ptr->ml_ptr->loadScene( scene, model_file_name, true );
-                /**/
-                // 添加默认的坐标与碰撞信息
-                user_data->bn_ptr->ml_ptr->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
-                user_data->bn_ptr->ml_ptr->getEntity()->addComponent< SphereCollider >( 1, 1 );
-                user_data->bn_ptr->game_ptr->addToScene( user_data->bn_ptr->ml_ptr->getEntity() );
+                // /**/
+                // // 添加默认的坐标与碰撞信息
+                // user_data->bn_ptr->ml_ptr->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
+                // user_data->bn_ptr->ml_ptr->getEntity()->addComponent< SphereCollider >( 1, 1 );
+                // user_data->bn_ptr->game_ptr->addToScene( user_data->bn_ptr->ml_ptr->getEntity() );
             }
         }
         // 释放内存

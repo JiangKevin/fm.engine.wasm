@@ -120,9 +120,6 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
         char zip_name_no_ext[ 100 ] = "";
         sprintf( zip_name_no_ext, "%s.zip", user_data->bn_ptr->fileName.c_str() );
         create_file( zip_name_no_ext, fetch->data, fetch->numBytes, 0777 );
-        int result = access( "/temp/monkey3.zip", F_OK );
-        printf( "Current file is ok? %d\n", result );
-
         //
         char* out_folder      = ( char* )malloc( sizeof( char ) * 1024 );
         char* inZipPath       = ( char* )malloc( sizeof( char ) * 1024 );
@@ -137,7 +134,7 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
         if ( is_zip_ok == 0 )
         {
             sprintf( model_file_name, "/temp/%s/%s.%s", user_data->bn_ptr->fileName.c_str(), user_data->bn_ptr->fileName.c_str(), user_data->bn_ptr->mould_file_type.c_str() );
-            result = access( model_file_name, F_OK );
+            int result = access( model_file_name, F_OK );
             printf( "unzip file(%s) is ok? %d\n", model_file_name, result );
             //
             const aiScene* scene = user_data->bn_ptr->importer->ReadFile( model_file_name, user_data->bn_ptr->assimpOptimizeFlags );

@@ -133,7 +133,7 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
             else
             {
                 log_info( "diffuseMap tex path: %s From Http", Path.data );
-                sprintf( new_path, "/temp/monkey3/%s", Path.data );
+                sprintf( new_path, "/temp/monkey/%s", Path.data );
                 diffuseMap = std::make_shared< Texture >( Asset( Path.data ), true );
             }
         }
@@ -152,7 +152,7 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
             else
             {
                 log_info( "normalMap tex path: %s From http", Path.data );
-                sprintf( new_path, "/temp/monkey3/%s", Path.data );
+                sprintf( new_path, "/temp/monkey/%s", Path.data );
                 normalMap = std::make_shared< Texture >( Asset( Path.data ), true );
             }
         }
@@ -171,7 +171,7 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
             else
             {
                 log_info( "specularMap tex path: %s From http", Path.data );
-                sprintf( new_path, "/temp/monkey3/%s", Path.data );
+                sprintf( new_path, "/temp/monkey/%s", Path.data );
                 specularMap = std::make_shared< Texture >( Asset( Path.data ), true );
             }
         }

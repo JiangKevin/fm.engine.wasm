@@ -1,8 +1,9 @@
 #include "coolGame.h"
+#include "testGame.h"
 //
 int main( int argc, char* argv[] )
 {
-    CoolGame game;
+    TestGame game;
     Engine   gameEngine( &game );
 
     gameEngine.start();

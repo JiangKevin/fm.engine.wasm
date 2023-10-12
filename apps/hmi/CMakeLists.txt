@@ -111,9 +111,9 @@ target_link_libraries($ENV{app_name} PUBLIC
   $ENV{dev_root}/outLibs/libminizip.a
 )
 
-#
-add_custom_command(TARGET $ENV{app_name} PRE_BUILD
-  COMMAND ${CMAKE_COMMAND} -E copy_directory
-  ${CMAKE_CURRENT_SOURCE_DIR}/assets
-  $<TARGET_FILE_DIR:$ENV{app_name}>/assets
-)
+# #
+# add_custom_command(TARGET $ENV{app_name} PRE_BUILD
+#   COMMAND ${CMAKE_COMMAND} -E copy_directory
+#   ${CMAKE_CURRENT_SOURCE_DIR}/assets
+#   $<TARGET_FILE_DIR:$ENV{app_name}>/assets
+# )

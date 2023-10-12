@@ -23,11 +23,11 @@ struct MeshRendererData
 class MeshLoader
 {
 public:
-    MeshLoader( const std::string file, bool fromHttp = false, Game* gamePtr = nullptr, std::string extension = "OBJ" );
+    MeshLoader( const std::string file, bool fromHttp = false, Game* gamePtr = nullptr, std::string extension = "obj" );
     ~MeshLoader( void );
     std::shared_ptr< Entity > getEntity( void ) const;
     /**/
-    void loadScene( const aiScene* scene, std::string tag = "", bool fromHttp = false, std::string extension = "OBJ" );
+    void loadScene( const aiScene* scene, std::string tag = "", bool fromHttp = false, std::string extension = "obj" );
     /**/
     Game* game_ptr;
 private:

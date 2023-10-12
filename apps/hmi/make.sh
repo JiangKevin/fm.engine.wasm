@@ -2,6 +2,7 @@
 # reset
 # clear
 #
+EMCC_AUTODEBUG=1
 export dev_root="/Users/kevin.jiang/Dev/src/github-res/fm.engine.wasm"
 export website="/Users/kevin.jiang/Dev/src/github-res/fm.engine.wasm/website"
 export app_name="hmi"

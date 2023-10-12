@@ -81,32 +81,6 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
     memcpy( str_blob, fetch->data, fetch->numBytes );
     /**/
     fecthRequest* user_data = ( fecthRequest* )fetch->userData;
-    if ( user_data->dataType == FETCH_BLOB )
-    {
-        if ( user_data->bn_ptr->mould_file_type == "OBJ" )
-        {
-            // const aiScene*   scene = importer.ReadFile( file, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace );
-            const aiScene* scene = user_data->bn_ptr->importer->ReadFileFromMemory( ( char* )str_blob, fetch->numBytes, user_data->bn_ptr->assimpOptimizeFlags );
-            if ( ! scene )
-            {
-                log_err( "Failed to load mesh: %s", user_data->bn_ptr->url.c_str() );
-            }
-            else
-            {
-                // 加载场景资源
-                user_data->bn_ptr->ml_ptr->loadScene( scene, user_data->bn_ptr->url, true );
-                // /**/
-                // // 添加默认的坐标与碰撞信息
-                // user_data->bn_ptr->ml_ptr->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
-                // user_data->bn_ptr->ml_ptr->getEntity()->addComponent< SphereCollider >( 1, 1 );
-                // user_data->bn_ptr->game_ptr->addToScene( user_data->bn_ptr->ml_ptr->getEntity() );
-            }
-        }
-    }
-    /**/
-    if ( user_data->dataType == FETCH_BLOB_IMAGE )
-    {
-    }
     /**/
     if ( user_data->dataType == FETCH_ZIP )
     {
@@ -145,16 +119,20 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
             }
             //
             const aiScene* scene = user_data->bn_ptr->importer->ReadFile( model_file_name, user_data->bn_ptr->assimpOptimizeFlags );
+            //
             if ( ! scene )
             {
                 log_err( "Failed to load mesh: %s", model_file_name );
             }
             else
             {
-                log_info( "load mesh: %s", model_file_name );
+                log_info( "load mesh: %s from Fetch fileSystem", model_file_name );
                 // 加载场景资源
-                // chdir( "/temp" );
-                user_data->bn_ptr->ml_ptr->loadScene( scene, model_file_name, true );
+                if ( user_data->bn_ptr->ml_ptr )
+                {
+                    printf( "+++++++++++++ file(%s) scene(%d) numMeshes(%d) \n", model_file_name, scene, scene->mNumMeshes );
+                    user_data->bn_ptr->ml_ptr->loadScene( scene, model_file_name, true );
+                }
                 // /**/
                 // // 添加默认的坐标与碰撞信息
                 // user_data->bn_ptr->ml_ptr->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );

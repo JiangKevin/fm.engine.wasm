@@ -11,12 +11,19 @@
 #include <algorithm>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 // TODO: need to come back and refactor this, make it load on a seperate thread.
 std::map< std::string, std::vector< MeshRendererData > > MeshLoader::sceneMeshRendererDataCache;
 
 MeshLoader::MeshLoader( const std::string file, bool fromHttp, Game* gamePtr, std::string extension )
 {
+    char  cwd[ 100 ];
+    char* ret;
     /**/
     game_ptr = gamePtr;
     /**/
@@ -24,7 +31,7 @@ MeshLoader::MeshLoader( const std::string file, bool fromHttp, Game* gamePtr, st
 
     if ( MeshLoader::sceneMeshRendererDataCache[ m_fileName ].size() > 0 )
     {
-        m_entity = std::make_shared< Entity >(m_fileName);
+        m_entity = std::make_shared< Entity >( m_fileName );
         // m_entity->updateTag( m_fileName );
         for ( auto meshRenderData : MeshLoader::sceneMeshRendererDataCache[ m_fileName ] )
         {
@@ -82,12 +89,15 @@ std::shared_ptr< Entity > MeshLoader::getEntity( void ) const
 
 void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp, std::string extension )
 {
-    m_entity = std::make_shared< Entity >(tag);
+    char  cwd[ 100 ];
+    char* ret;
+    // 
+    m_entity = std::make_shared< Entity >( tag );
     // m_entity->updateTag( tag );
     //
     for ( int i = 0; i < scene->mNumMeshes; i++ )
     {
-        const aiMesh* model = scene->mMeshes[ i ];
+        const aiMesh*               model = scene->mMeshes[ i ];
         std::vector< Vertex >       vertices;
         std::vector< unsigned int > indices;
 
@@ -134,6 +144,10 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
             }
             else
             {
+                chdir( "/" );
+                ret = getcwd( cwd, sizeof( cwd ) );
+                assert( ret == cwd );
+                printf( "Current working dir: %s\n", cwd );
                 log_info( "diffuseMap tex path: %s From Http", Path.data );
                 sprintf( new_path, "/temp/monkey/%s", Path.data );
                 diffuseMap = std::make_shared< Texture >( Asset( new_path ), true );
@@ -154,6 +168,10 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
             }
             else
             {
+                chdir( "/" );
+                ret = getcwd( cwd, sizeof( cwd ) );
+                assert( ret == cwd );
+                printf( "Current working dir: %s\n", cwd );
                 log_info( "normalMap tex path: %s From http", Path.data );
                 sprintf( new_path, "/temp/monkey/%s", Path.data );
                 normalMap = std::make_shared< Texture >( Asset( new_path ), true );
@@ -162,7 +180,7 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
         else
         {
             log_info( "normalMap tex path: %s for default", Path.data );
-            normalMap = std::make_shared< Texture >( Asset( Path.data ) );
+            normalMap = std::make_shared< Texture >( Asset( "default_normal.jpg" ) );
         }
         /**/
         if ( pMaterial->GetTextureCount( aiTextureType_SPECULAR ) > 0 && pMaterial->GetTexture( aiTextureType_SPECULAR, 0, &Path, NULL, NULL, NULL, NULL, NULL ) == AI_SUCCESS )
@@ -174,6 +192,10 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
             }
             else
             {
+                chdir( "/" );
+                ret = getcwd( cwd, sizeof( cwd ) );
+                assert( ret == cwd );
+                printf( "Current working dir: %s\n", cwd );
                 log_info( "specularMap tex path: %s From http", Path.data );
                 sprintf( new_path, "/temp/monkey/%s", Path.data );
                 specularMap = std::make_shared< Texture >( Asset( new_path ), true );

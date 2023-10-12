@@ -107,6 +107,16 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
 
         if ( is_zip_ok == 0 )
         {
+            chdir( "/" );
+            ret = getcwd( cwd, sizeof( cwd ) );
+            assert( ret == cwd );
+            printf( "Current working dir: %s\n", cwd );
+            //
+            // chdir( "/assets" );
+            // ret = getcwd( cwd, sizeof( cwd ) );
+            // assert( ret == cwd );
+            // printf( "Current working dir: %s\n", cwd );
+            //
             sprintf( model_file_name, "/temp/%s/%s.%s", user_data->bn_ptr->fileName.c_str(), user_data->bn_ptr->fileName.c_str(), user_data->bn_ptr->mould_file_type.c_str() );
             int result = access( model_file_name, F_OK );
             if ( result == 0 )

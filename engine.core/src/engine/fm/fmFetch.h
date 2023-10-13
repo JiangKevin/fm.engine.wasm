@@ -88,6 +88,7 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
         char  cwd[ 100 ];
         char* ret;
         int   result;
+        // 验证 /temp文件夹是否存在，不存在就创建
         result = access( "/temp", F_OK );
         if ( result != 0 )
         {
@@ -99,18 +100,24 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
         //
         char zip_name_no_ext[ 100 ] = "";
         sprintf( zip_name_no_ext, "/temp/%s.zip", user_data->bn_ptr->fileName.c_str() );
-        create_file( zip_name_no_ext, fetch->data, fetch->numBytes, 0777 );
         //
         char* out_folder      = ( char* )malloc( sizeof( char ) * 1024 );
         char* inZipPath       = ( char* )malloc( sizeof( char ) * 1024 );
         char* model_file_name = ( char* )malloc( sizeof( char ) * 1024 );
         sprintf( out_folder, "/temp/%s", user_data->bn_ptr->fileName.c_str() );
         sprintf( inZipPath, "/temp/%s.zip", user_data->bn_ptr->fileName.c_str() );
-        //
         const char* cmd_par[] = { "./fm_zip", "-x", "-o", "-d", out_folder, inZipPath };
-        int         is_zip_ok = zip_tool_entrance( 6, cmd_par );
-        //
+        int         is_zip_ok;
+        access( zip_name_no_ext, F_OK );
+        // 如果temp中不存在下载的文件，创建zip，并解压缩到相应文件夹下
+        if ( result != 0 )
+        {
+            // 如果temp中不存在下载的文件，创建zip，并解压缩到相应文件夹下
+            create_file( zip_name_no_ext, fetch->data, fetch->numBytes, 0777 );
+            is_zip_ok = zip_tool_entrance( 6, cmd_par );
+        }
 
+        //
         if ( is_zip_ok == 0 )
         {
             //

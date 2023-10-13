@@ -18,7 +18,7 @@ using namespace std;
 static string tidy_file_name( string in )
 {
 #ifndef TIDY_COUNT
-    #define TIDY_COUNT 60
+    #define TIDY_COUNT 52
 #endif
     string file_name = in;
     if ( file_name.length() > TIDY_COUNT )
@@ -37,7 +37,7 @@ static string tidy_file_name( string in )
     #ifdef ANDROID
         #define debug( M, ... ) __android_log_print( ANDROID_LOG_DEBUG, "EngineLogger", "DEBUG %s:%d: " M "\n", __FILE__, __LINE__, ##__VA_ARGS__ )
     #else
-        #define debug( M, ... ) fprintf( stderr, "DEBUG %s:%d: " M "\n", __FILE__, __LINE__, ##__VA_ARGS__ )
+        #define debug( M, ... ) fprintf( stderr, "DEBUG %s:%d: " M "\n", tidy_file_name( __FILE__ ).c_str(), __LINE__, ##__VA_ARGS__ )
     #endif
 #endif
 
@@ -46,13 +46,13 @@ static string tidy_file_name( string in )
 #ifdef ANDROID
     #define log_err( M, ... ) __android_log_print( ANDROID_LOG_ERROR, "EngineLogger", "[ERROR] (%s:%d: errno: %s) " M "\n", __FILE__, __LINE__, clean_errno(), ##__VA_ARGS__ )
 #else
-    #define log_err( M, ... ) fprintf( stderr, "[ERROR] (%s:%d: errno: %s) \t" M "\n", __FILE__, __LINE__, clean_errno(), ##__VA_ARGS__ )
+    #define log_err( M, ... ) fprintf( stderr, "[ERROR] (%s:%d: errno: %s) \t" M "\n", tidy_file_name( __FILE__ ).c_str(), __LINE__, clean_errno(), ##__VA_ARGS__ )
 #endif
 
 #ifdef ANDROID
     #define log_warn( M, ... ) __android_log_print( ANDROID_LOG_WARN, "EngineLogger", "[WARN] (%s:%d: errno: %s) " M "\n", __FILE__, __LINE__, clean_errno(), ##__VA_ARGS__ )
 #else
-    #define log_warn( M, ... ) fprintf( stderr, "[WARN] (%s:%d: errno: %s) \t" M "\n", __FILE__, __LINE__, clean_errno(), ##__VA_ARGS__ )
+    #define log_warn( M, ... ) fprintf( stderr, "[WARN] (%s:%d: errno: %s) \t" M "\n", tidy_file_name( __FILE__ ).c_str(), __LINE__, clean_errno(), ##__VA_ARGS__ )
 #endif
 
 #ifdef ANDROID

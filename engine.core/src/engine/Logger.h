@@ -37,7 +37,8 @@ static string tidy_file_name( string in )
     #ifdef ANDROID
         #define debug( M, ... ) __android_log_print( ANDROID_LOG_DEBUG, "EngineLogger", "DEBUG %s:%d: " M "\n", __FILE__, __LINE__, ##__VA_ARGS__ )
     #else
-        #define debug( M, ... ) fprintf( stderr, "DEBUG %s:%d: " M "\n", tidy_file_name( __FILE__ ).c_str(), __LINE__, ##__VA_ARGS__ )
+    // #define debug( M, ... ) fprintf( stderr, "DEBUG %s:%d: " M "\n", tidy_file_name( __FILE__ ).c_str(), __LINE__, ##__VA_ARGS__ )
+        #define debug( M, ... ) printf( "[DEBUG] (%s:%d) \t" M "\n", tidy_file_name( __FILE__ ).c_str(), __LINE__, ##__VA_ARGS__ )
     #endif
 #endif
 

@@ -95,7 +95,7 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
             mkdir( "temp", 0777 );
             ret = getcwd( cwd, sizeof( cwd ) );
             assert( ret == cwd );
-            log_info( "Current working dir: %s", cwd );
+            debug( "Current working dir: %s", cwd );
         }
         //
         char zip_name_no_ext[ 100 ] = "";
@@ -124,14 +124,14 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
             result = access( model_file_name, F_OK );
             if ( result == 0 )
             {
-                log_info( "Unzip file(%s) is ok", model_file_name );
+                debug( "The model file（%s） is in the corresponding folder", model_file_name );
                 CustomIOSystem* cisys_ptr = new CustomIOSystem( true );
                 // cisys_ptr->plush();
                 user_data->bn_ptr->importer->SetIOHandler( cisys_ptr );
             }
             else
             {
-                log_info( "Unzip file(%s) is noe ok !!!!", model_file_name );
+                debug( "Unzip file(%s) is noe ok !!!!", model_file_name );
             }
             //
             const aiScene* scene = user_data->bn_ptr->importer->ReadFile( model_file_name, user_data->bn_ptr->assimpOptimizeFlags );
@@ -142,7 +142,7 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
             }
             else
             {
-                log_info( "Load mesh: %s from Fetch fileSystem", model_file_name );
+                debug( "Load mesh: %s from Fetch fileSystem", model_file_name );
                 // 加载场景资源
                 if ( user_data->bn_ptr->ml_ptr )
                 {

@@ -66,8 +66,8 @@ int32_t minizip_erase( const char* src_path, const char* target_path, int32_t ar
 
 int32_t minizip_banner( void )
 {
-    printf( "fm_minizip-ng %s\n", MZ_VERSION );
-    printf( "---------------------------------------------------\n" );
+    debug( "fm_minizip-ng:%s", MZ_VERSION );
+    // debug( "---------------------------------------------------" );
     return MZ_OK;
 }
 
@@ -160,7 +160,7 @@ int32_t minizip_list( const char* path )
         mz_zip_time_t_to_tm( file_info->modified_date, &tmu_date );
 
         /* Print entry information */
-        printf( "%12" PRId64 " %12" PRId64 "  %3" PRIu32 "%% %6s%c %8" PRIx32 " %2.2" PRIu32 "-%2.2" PRIu32 "-%2.2" PRIu32 " %2.2" PRIu32 ":%2.2" PRIu32 " %8.8" PRIx32 "   %s\n", file_info->compressed_size, file_info->uncompressed_size, ratio, method, crypt, file_info->external_fa,
+        debug( "%12" PRId64 " %12" PRId64 "  %3" PRIu32 "%% %6s%c %8" PRIx32 " %2.2" PRIu32 "-%2.2" PRIu32 "-%2.2" PRIu32 " %2.2" PRIu32 ":%2.2" PRIu32 " %8.8" PRIx32 "   %s", file_info->compressed_size, file_info->uncompressed_size, ratio, method, crypt, file_info->external_fa,
                 ( uint32_t )tmu_date.tm_mon + 1, ( uint32_t )tmu_date.tm_mday, ( uint32_t )tmu_date.tm_year % 100, ( uint32_t )tmu_date.tm_hour, ( uint32_t )tmu_date.tm_min, file_info->crc, file_info->filename );
 
         err = mz_zip_reader_goto_next_entry( reader );
@@ -188,7 +188,7 @@ int32_t minizip_add_entry_cb( void* handle, void* userdata, mz_zip_file* file_in
     MZ_UNUSED( userdata );
 
     /* Print the current file we are trying to compress */
-    printf( "Adding %s\n", file_info->filename );
+    debug( "Adding %s", file_info->filename );
     return MZ_OK;
 }
 
@@ -209,7 +209,7 @@ int32_t minizip_add_progress_cb( void* handle, void* userdata, mz_zip_file* file
 
     /* Print the progress of the current compress operation */
     if ( options->verbose )
-        printf( "%s - %" PRId64 " / %" PRId64 " (%.02f%%)\n", file_info->filename, position, file_info->uncompressed_size, progress );
+        debug( "%s - %" PRId64 " / %" PRId64 " (%.02f%%)", file_info->filename, position, file_info->uncompressed_size, progress );
     return MZ_OK;
 }
 
@@ -226,7 +226,7 @@ int32_t minizip_add_overwrite_cb( void* handle, void* userdata, const char* path
         do
         {
             char answer[ 128 ];
-            printf( "The file %s exists. Overwrite ? [y]es, [n]o, [a]ppend : ", path );
+            debug( "The file %s exists. Overwrite ? [y]es, [n]o, [a]ppend : ", path );
             if ( scanf( "%1s", answer ) != 1 )
                 exit( EXIT_FAILURE );
             rep = answer[ 0 ];
@@ -256,7 +256,7 @@ int32_t minizip_add( const char* path, const char* password, minizip_opt* option
     int32_t     i               = 0;
     const char* filename_in_zip = NULL;
 
-    printf( "Archive %s\n", path );
+    debug( "Archive %s", path );
 
     /* Create zip writer */
     writer = mz_zip_writer_create();
@@ -315,7 +315,7 @@ int32_t minizip_extract_entry_cb( void* handle, void* userdata, mz_zip_file* fil
     MZ_UNUSED( path );
 
     /* Print the current entry extracting */
-    printf( "Extracting %s\n", file_info->filename );
+    debug( "Extracting:%s", file_info->filename );
     return MZ_OK;
 }
 
@@ -336,7 +336,7 @@ int32_t minizip_extract_progress_cb( void* handle, void* userdata, mz_zip_file* 
 
     /* Print the progress of the current extraction */
     if ( options->verbose )
-        printf( "%s - %" PRId64 " / %" PRId64 " (%.02f%%)\n", file_info->filename, position, file_info->uncompressed_size, progress );
+        debug( "%s - %" PRId64 " / %" PRId64 " (%.02f%%)", file_info->filename, position, file_info->uncompressed_size, progress );
 
     return MZ_OK;
 }
@@ -378,7 +378,7 @@ int32_t minizip_extract( const char* path, const char* pattern, const char* dest
     int32_t err       = MZ_OK;
     int32_t err_close = MZ_OK;
 
-    printf( "Archive %s\n", path );
+    debug( "Archive:%s", path );
 
     /* Create zip reader */
     reader = mz_zip_reader_create();

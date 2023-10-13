@@ -28,7 +28,7 @@ bool CustomIOSystem::ComparePaths( const char* one, const char* second ) const
 
 bool CustomIOSystem::Exists( const char* pFile ) const
 {
-    log_info( "CustomIOSystem::Exists file(%s),http(%d)", pFile, is_fromHttp );
+    // log_info( "CustomIOSystem::Exists file(%s),http(%d)", pFile, is_fromHttp );
 #ifndef ANDROID
     // TODO: FIX THIS IN WINDOWS
     // if(access(("../assets/" + std::string(pFile)).c_str(), F_OK) != -1) {
@@ -49,7 +49,7 @@ char CustomIOSystem::getOsSeparator( void ) const
 
 Assimp::IOStream* CustomIOSystem::Open( const char* pFile, const char* pMode )
 {
-    log_info( "CustomIOSystem::open file(%s),Mode(%s),http(%d)", pFile, pMode, is_fromHttp );
+    debug( "CustomIOSystem::open file(%s),Mode(%s),http(%d)", pFile, pMode, is_fromHttp );
     return new CustomIOStream( pFile, pMode, is_fromHttp );
 }
 

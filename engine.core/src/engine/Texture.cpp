@@ -18,7 +18,7 @@ Texture::Texture( const Asset& file, GLenum textureTarget, GLfloat filter )
     {
         int x, y, bytesPerPixel;
         //
-        log_info( "From Texture file(%s:%d)", file.getIOStream()->getFileName().c_str(), file.getIOStream()->fileSize() );
+        debug( "From Texture file(%s:%d)", file.getIOStream()->getFileName().c_str(), file.getIOStream()->fileSize() );
         //
         unsigned char* data = stbi_load_from_memory( reinterpret_cast< const unsigned char* >( file.read() ), file.getIOStream()->fileSize(), &x, &y, &bytesPerPixel, 4 );
 

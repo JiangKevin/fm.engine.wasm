@@ -67,6 +67,10 @@ IF(EMSCRIPTEN)
 
   # add_definitions(-DASSET_DIR="assets/")
   add_definitions(-DEMSCRIPTEN)
+  # 控制debug log 显示与否
+  add_definitions(-DDEBUG)
+
+  #
   set(ENGINE_LIBS
     ${ASSIMP_LIBRARY}
     ${IMGUI_LIBRARY}
@@ -137,5 +141,3 @@ include_directories(${ENGINE_INCLUDES})
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/src)
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT game)
-
-

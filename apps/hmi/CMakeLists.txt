@@ -51,6 +51,7 @@ add_definitions(-DEMSCRIPTEN)
 # DEFINE
 target_compile_definitions($ENV{app_name} PUBLIC
   EMSCRIPTEN
+  DEBUG
 )
 
 #

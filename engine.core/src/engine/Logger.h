@@ -28,20 +28,20 @@
 #ifdef ANDROID
   #define log_err(M, ...) __android_log_print(ANDROID_LOG_ERROR, "EngineLogger", "[ERROR] (%s:%d: errno: %s) " M "\n", __FILE__, __LINE__, clean_errno(), ##__VA_ARGS__)
 #else
-  #define log_err(M, ...) fprintf(stderr, "[ERROR] (%s:%d: errno: %s) " M "\n", __FILE__, __LINE__, clean_errno(), ##__VA_ARGS__)
+  #define log_err(M, ...) fprintf(stderr, "[ERROR] (%s:%d: errno: %s) \t" M "\n", __FILE__, __LINE__, clean_errno(), ##__VA_ARGS__)
 #endif
 
 #ifdef ANDROID
   #define log_warn(M, ...) __android_log_print(ANDROID_LOG_WARN, "EngineLogger", "[WARN] (%s:%d: errno: %s) " M "\n", __FILE__, __LINE__, clean_errno(), ##__VA_ARGS__)
 #else
-  #define log_warn(M, ...) fprintf(stderr, "[WARN] (%s:%d: errno: %s) " M "\n", __FILE__, __LINE__, clean_errno(), ##__VA_ARGS__)
+  #define log_warn(M, ...) fprintf(stderr, "[WARN] (%s:%d: errno: %s) \t" M "\n", __FILE__, __LINE__, clean_errno(), ##__VA_ARGS__)
 #endif
 
 #ifdef ANDROID
   #define log_info(M, ...) __android_log_print(ANDROID_LOG_VERBOSE, "EngineLogger", "[INFO] (%s:%d) " M "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 #else
   // #define log_info(M, ...) fprintf(stderr, "[INFO] (%s:%d) " M "\n", __FILE__, __LINE__, ##__VA_ARGS__)
-  #define log_info(M, ...) printf("[INFO] (%s:%d) " M "\n", __FILE__, __LINE__, ##__VA_ARGS__)
+  #define log_info(M, ...) printf("[INFO] (%s:%d) \t" M "\n", __FILE__, __LINE__, ##__VA_ARGS__)
 #endif
 
 #define check(A, M, ...) if(!(A)) { log_err(M, ##__VA_ARGS__); errno=0; goto error; }

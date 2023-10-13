@@ -7,7 +7,8 @@
 
 CustomIOStream::CustomIOStream( const char* pFile, const char* pMode, bool fromHttp )
 {
-    m_iostream = new EngineIOStream( std::string( pFile ), fromHttp );
+    is_fromHttp = fromHttp;
+    m_iostream  = new EngineIOStream( std::string( pFile ), fromHttp );
 }
 
 CustomIOStream::~CustomIOStream( void )

@@ -39,13 +39,9 @@ public:
     template < class T, class... _Types > inline void addComponent( _Types&&... _Args )
     {
         auto component = std::make_shared< T >( _Args... );
-
         component->setParent( this );
-        printf( "++++++ ------------------------- 2.2 %s\n", typeid( T ).name() );
         componentsByTypeid[ typeid( T ) ].push_back( std::dynamic_pointer_cast< Component >( component ) );
-        printf( "++++++ ------------------------- 2.3 \n" );
         components.push_back( component );
-        printf( "++++++ ------------------------- 2 \n" );
     }
 
     void updateAll( Input* input, std::chrono::microseconds delta );

@@ -62,7 +62,7 @@ MeshLoader::MeshLoader( const std::string file, bool fromHttp, Game* gamePtr, st
             log_info( "Loading mesh: %s From http", file.c_str() );
             /**/
             Assimp::Importer* importer = new Assimp::Importer();
-            importer->SetIOHandler( new CustomIOSystem( true ) );
+            // importer->SetIOHandler( new CustomIOSystem( true ) );
             blob_node* bn_ptr       = new blob_node();
             bn_ptr->game_ptr        = game_ptr;
             bn_ptr->ml_ptr          = this;
@@ -91,7 +91,7 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
 {
     char  cwd[ 100 ];
     char* ret;
-    // 
+    //
     m_entity = std::make_shared< Entity >( tag );
     // m_entity->updateTag( tag );
     //
@@ -144,13 +144,9 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
             }
             else
             {
-                chdir( "/" );
-                ret = getcwd( cwd, sizeof( cwd ) );
-                assert( ret == cwd );
-                printf( "Current working dir: %s\n", cwd );
                 log_info( "diffuseMap tex path: %s From Http", Path.data );
                 sprintf( new_path, "/temp/monkey/%s", Path.data );
-                diffuseMap = std::make_shared< Texture >( Asset( new_path ), true );
+                diffuseMap = std::make_shared< Texture >( Asset( new_path, true ) );
             }
         }
         else
@@ -168,13 +164,9 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
             }
             else
             {
-                chdir( "/" );
-                ret = getcwd( cwd, sizeof( cwd ) );
-                assert( ret == cwd );
-                printf( "Current working dir: %s\n", cwd );
                 log_info( "normalMap tex path: %s From http", Path.data );
                 sprintf( new_path, "/temp/monkey/%s", Path.data );
-                normalMap = std::make_shared< Texture >( Asset( new_path ), true );
+                normalMap = std::make_shared< Texture >( Asset( new_path, true ) );
             }
         }
         else
@@ -192,13 +184,9 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
             }
             else
             {
-                chdir( "/" );
-                ret = getcwd( cwd, sizeof( cwd ) );
-                assert( ret == cwd );
-                printf( "Current working dir: %s\n", cwd );
                 log_info( "specularMap tex path: %s From http", Path.data );
                 sprintf( new_path, "/temp/monkey/%s", Path.data );
-                specularMap = std::make_shared< Texture >( Asset( new_path ), true );
+                specularMap = std::make_shared< Texture >( Asset( new_path, true ) );
             }
         }
         else

@@ -23,7 +23,7 @@ enum origin
 class EngineIOStream
 {
 public:
-    EngineIOStream( const std::string& fileName ,bool fromHttp=false);
+    EngineIOStream( const std::string& fileName, bool fromHttp = false );
     ~EngineIOStream( void );
 
     size_t read( void* pvBuffer, size_t pSize, size_t pCount );
@@ -36,6 +36,7 @@ public:
     std::string getFileName( void );
 private:
     std::string m_fileName;
+    bool        is_fromHttp = false;
 
 #ifndef ANDROID
     std::fstream* m_file;

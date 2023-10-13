@@ -12,7 +12,8 @@
 
 EngineIOStream::EngineIOStream( const std::string& fileName, bool fromHttp )
 {
-    m_fileName = fileName;
+    is_fromHttp = fromHttp;
+    m_fileName  = fileName;
 #ifdef ANDROID
     m_file = AAssetManager_open( AndroidAssetManager::getAssetManager(), fileName.c_str(), AASSET_MODE_UNKNOWN );
 #elif EMSCRIPTEN
@@ -27,10 +28,6 @@ EngineIOStream::EngineIOStream( const std::string& fileName, bool fromHttp )
         {
             printf( "From EngineIOStream :++++++++ texture file err(%s)\n", fileName.c_str() );
         }
-        // else
-        // {
-        //     printf( "From EngineIOStream :++++++++ texture file ok(%s)\n", fileName.c_str() );
-        // }
     }
 
 #else
@@ -145,3 +142,4 @@ std::string EngineIOStream::getFileName( void )
 {
     return m_fileName;
 }
+

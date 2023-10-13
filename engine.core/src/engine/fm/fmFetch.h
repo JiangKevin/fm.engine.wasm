@@ -1,5 +1,6 @@
 #pragma once
 #include "Game.h"
+#include "Logger.h"
 #include "components/SphereCollider.h"
 #include "fm/wasm_minizip.h"
 #include "zlib.h"
@@ -86,13 +87,13 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
     {
         char  cwd[ 100 ];
         char* ret;
-        chdir( "/temp" );
-        ret = getcwd( cwd, sizeof( cwd ) );
-        assert( ret == cwd );
-        printf( "Current working dir: %s\n", cwd );
+        // chdir( "/temp" );
+        // ret = getcwd( cwd, sizeof( cwd ) );
+        // assert( ret == cwd );
+        // printf( "Current working dir: %s\n", cwd );
         //
         char zip_name_no_ext[ 100 ] = "";
-        sprintf( zip_name_no_ext, "%s.zip", user_data->bn_ptr->fileName.c_str() );
+        sprintf( zip_name_no_ext, "/temp/%s.zip", user_data->bn_ptr->fileName.c_str() );
         create_file( zip_name_no_ext, fetch->data, fetch->numBytes, 0777 );
         //
         char* out_folder      = ( char* )malloc( sizeof( char ) * 1024 );
@@ -107,10 +108,10 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
 
         if ( is_zip_ok == 0 )
         {
-            chdir( "/" );
-            ret = getcwd( cwd, sizeof( cwd ) );
-            assert( ret == cwd );
-            printf( "Current working dir: %s\n", cwd );
+            // chdir( "/" );
+            // ret = getcwd( cwd, sizeof( cwd ) );
+            // assert( ret == cwd );
+            // printf( "Current working dir: %s\n", cwd );
             //
             // chdir( "/assets" );
             // ret = getcwd( cwd, sizeof( cwd ) );
@@ -121,11 +122,14 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
             int result = access( model_file_name, F_OK );
             if ( result == 0 )
             {
-                printf( "unzip file(%s) is ok \n", model_file_name );
+                log_info( "unzip file(%s) is ok", model_file_name );
+                CustomIOSystem* cisys_ptr = new CustomIOSystem( true );
+                // cisys_ptr->plush();
+                user_data->bn_ptr->importer->SetIOHandler( cisys_ptr );
             }
             else
             {
-                printf( "unzip file(%s) is noe ok !!!! \n", model_file_name );
+                log_info( "unzip file(%s) is noe ok !!!!", model_file_name );
             }
             //
             const aiScene* scene = user_data->bn_ptr->importer->ReadFile( model_file_name, user_data->bn_ptr->assimpOptimizeFlags );

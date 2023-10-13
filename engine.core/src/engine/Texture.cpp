@@ -14,13 +14,14 @@ Texture::Texture( const Asset& file, GLenum textureTarget, GLfloat filter )
 {
     auto it = m_textureCache.find( file.getIOStream()->getFileName() );
     //
-    printf( "From Texture file(%s)\n", file.getIOStream()->getFileName().c_str() );
+    log_info( "From Texture file(%s)", file.getIOStream()->getFileName().c_str() );
     //
     if ( it == m_textureCache.end() || ! ( m_textureData = it->second.lock() ) )
     {
         int x, y, bytesPerPixel;
         //
-        printf( "From Texture file(%s：%d)\n", file.getIOStream()->getFileName().c_str(), file.getIOStream()->fileSize() );
+        log_info( "From Texture file(%s:%d)", file.getIOStream()->getFileName().c_str(), file.getIOStream()->fileSize() );
+        //
         unsigned char* data = stbi_load_from_memory( reinterpret_cast< const unsigned char* >( file.read() ), file.getIOStream()->fileSize(), &x, &y, &bytesPerPixel, 4 );
 
         if ( data == NULL )

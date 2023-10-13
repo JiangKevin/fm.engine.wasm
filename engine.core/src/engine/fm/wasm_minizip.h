@@ -161,7 +161,7 @@ int32_t minizip_list( const char* path )
 
         /* Print entry information */
         debug( "%12" PRId64 " %12" PRId64 "  %3" PRIu32 "%% %6s%c %8" PRIx32 " %2.2" PRIu32 "-%2.2" PRIu32 "-%2.2" PRIu32 " %2.2" PRIu32 ":%2.2" PRIu32 " %8.8" PRIx32 "   %s", file_info->compressed_size, file_info->uncompressed_size, ratio, method, crypt, file_info->external_fa,
-                ( uint32_t )tmu_date.tm_mon + 1, ( uint32_t )tmu_date.tm_mday, ( uint32_t )tmu_date.tm_year % 100, ( uint32_t )tmu_date.tm_hour, ( uint32_t )tmu_date.tm_min, file_info->crc, file_info->filename );
+               ( uint32_t )tmu_date.tm_mon + 1, ( uint32_t )tmu_date.tm_mday, ( uint32_t )tmu_date.tm_year % 100, ( uint32_t )tmu_date.tm_hour, ( uint32_t )tmu_date.tm_min, file_info->crc, file_info->filename );
 
         err = mz_zip_reader_goto_next_entry( reader );
 
@@ -601,7 +601,9 @@ int zip_tool_entrance( int argc, const char* argv[] )
     /* Parse command line options */
     for ( i = 1; i < argc; i += 1 )
     {
+#ifdef DEBUG
         printf( "%s ", argv[ i ] );
+#endif
         if ( argv[ i ][ 0 ] == '-' )
         {
             char c = argv[ i ][ 1 ];
@@ -692,8 +694,9 @@ int zip_tool_entrance( int argc, const char* argv[] )
         else if ( path_arg == 0 )
             path_arg = i;
     }
+#ifdef DEBUG
     printf( "\n" );
-
+#endif
     if ( err == MZ_SUPPORT_ERROR )
     {
         printf( "Feature not supported\n" );

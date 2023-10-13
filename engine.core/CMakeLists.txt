@@ -68,7 +68,7 @@ IF(EMSCRIPTEN)
   # add_definitions(-DASSET_DIR="assets/")
   add_definitions(-DEMSCRIPTEN)
   # 控制debug log 显示与否
-  add_definitions(-DDEBUG)
+  # add_definitions(-DDEBUG)
 
   #
   set(ENGINE_LIBS

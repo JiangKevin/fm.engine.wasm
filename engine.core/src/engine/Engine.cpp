@@ -23,16 +23,16 @@ static Engine* instance = NULL;
 
 Engine::Engine( Game* game )
 {
-    log_info( "Initializing SDL" );
+    debug( "Initializing SDL" );
     m_window = std::make_unique< Window >();
 
-    log_info( "Initializing GLEW" );
+    debug( "Initializing GLEW" );
     m_glewManager = std::make_unique< GLEWManager >();
 
-    log_info( "Initializing GL" );
+    debug( "Initializing GL" );
     m_glManager = std::make_unique< GLManager >( std::make_unique< ForwardRenderer >(), m_window->getDrawableSize() );
 
-    log_info( "Initializing Physics Manager" );
+    debug( "Initializing Physics Manager" );
     m_physicsManager = std::make_unique< PhysicsManager >();
 
     this->game = game;
@@ -49,7 +49,7 @@ void Engine::start( void )
 
     game->getRootScene()->registerWithEngineAll( this );
 
-    log_info( "Initializing game" );
+    debug( "Initializing game" );
 
     m_window->init();
 

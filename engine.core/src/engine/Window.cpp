@@ -28,22 +28,22 @@ Window::Window( void )
     SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 
 #if defined( GLES3 )
-    log_info( "Using GLES 3" );
+    debug( "Using GLES 3" );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 0 );
 #elif defined( GLES2 )
-    log_info( "Using GLES 2" );
+    debug( "Using GLES 2" );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 2 );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 0 );
 #elif defined( EMSCRIPTEN )
-    log_info( "Using GLES 3" );
+    debug( "Using GLES 3" );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 0 );
 #else
-    log_info( "Using GL 3" );
+    debug( "Using GL 3" );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
     SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 2 );
@@ -77,7 +77,7 @@ Window::Window( void )
     this->m_width  = display_w;
     this->m_height = display_h;
 
-    log_info( "Window init to: %i x %i", this->m_width, this->m_height );
+    debug( "Window init to: %i x %i", this->m_width, this->m_height );
 }
 
 Window::~Window( void )
@@ -89,7 +89,7 @@ Window::~Window( void )
 
 void Window::init( void )
 {
-    log_info( "Initializing GUI" );
+    debug( "Initializing GUI" );
     m_guiManager = std::make_unique< GuiManager >( getDrawableSize(), getDisplaySize(), getSDLWindow() );
 }
 

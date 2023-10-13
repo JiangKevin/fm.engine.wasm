@@ -78,8 +78,6 @@ struct fecthRequest
 /**/
 void downloadSucceeded( emscripten_fetch_t* fetch )
 {
-    char* str_blob = ( char* )malloc( fetch->numBytes * sizeof( char ) );
-    memcpy( str_blob, fetch->data, fetch->numBytes );
     /**/
     fecthRequest* user_data = ( fecthRequest* )fetch->userData;
     /**/
@@ -101,9 +99,9 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
         char zip_name_no_ext[ 100 ] = "";
         sprintf( zip_name_no_ext, "/temp/%s.zip", user_data->bn_ptr->fileName.c_str() );
         //
-        char* out_folder      = ( char* )malloc( sizeof( char ) * 1024 );
-        char* inZipPath       = ( char* )malloc( sizeof( char ) * 1024 );
-        char* model_file_name = ( char* )malloc( sizeof( char ) * 1024 );
+        char out_folder[ 100 ]      = "";
+        char inZipPath[ 100 ]       = "";
+        char model_file_name[ 100 ] = "";
         sprintf( out_folder, "/temp/%s", user_data->bn_ptr->fileName.c_str() );
         sprintf( inZipPath, "/temp/%s.zip", user_data->bn_ptr->fileName.c_str() );
         const char* cmd_par[] = { "./fm_zip", "-x", "-o", "-d", out_folder, inZipPath };
@@ -155,13 +153,11 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
                 }
             }
         }
-        // 释放内存
-        free( out_folder );
-        free( inZipPath );
-        free( model_file_name );
+        // // 释放内存
+        // free( out_folder );
+        // free( inZipPath );
+        free( cmd_par );
     }
-    /**/
-    free( str_blob );
     /**/
     emscripten_fetch_close( fetch );
 }

@@ -172,20 +172,22 @@ void CoolGame::init( GLManager* glManager )
 
         addToScene( plane );
     }
+    //
+    MeshLoader ml( "AncientUgandan", true, this, "obj" );
+    MeshLoader ml1( "monkey", true, this, "obj" );
+    // for ( int i = 0; i < 1; i++ )
+    // {
+    //     MeshLoader ml( "AncientUgandan", true, this, "obj" );
+    //     // ml.getEntity()->getTransform().setPosition( glm::vec3( 0, i * 3, -2.5 ) );
+    //     // ml.getEntity()->addComponent< SphereCollider >( 1, 1 );
+    //     // addToScene( ml.getEntity() );
+    // }
 
-    for ( int i = 0; i < 10; i++ )
-    {
-        MeshLoader ml( "AncientUgandan.obj" );
-        ml.getEntity()->getTransform().setPosition( glm::vec3( 0, i * 3, -2.5 ) );
-        ml.getEntity()->addComponent< SphereCollider >( 1, 1 );
-        addToScene( ml.getEntity() );
-    }
-
-    MeshLoader money( "monkey3", true, this, "obj" );
-    // money.getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
-    // money.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.05f, 100.0f );
-    // money.getEntity()->addComponent< SphereCollider >( 1, 1 );
-    // addToScene( money.getEntity() );
+    MeshLoader money( "monkey3.obj" );
+    money.getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
+    money.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.05f, 100.0f );
+    money.getEntity()->addComponent< SphereCollider >( 1, 1 );
+    addToScene( money.getEntity() );
 
     MeshLoader money2( "monkey3.obj" );
     money2.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.8f, 100.0f );

@@ -39,11 +39,13 @@ void TestGame::init( GLManager* glManager )
     }
     //
     MeshLoader money( "monkey", true, this, "obj" );
-    // money.getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
-    // money.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.05f, 100.0f );
-    // money.getEntity()->addComponent< SphereCollider >( 1, 1 );
-    // addToScene( money.getEntity() );
+    MeshLoader money4( "AncientUgandan", true, this, "obj" );
     MeshLoader money5( "AncientUgandan", true, this, "obj" );
+    MeshLoader money6( "monkey", true, this, "obj" );
+    // for ( int i = 0; i < 1; i++ )
+    // {
+    //     MeshLoader ml( "AncientUgandan", true, this, "obj" );
+    // }
     //
     MeshLoader money2( "AncientUgandan.obj" );
     money2.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.8f, 100.0f );

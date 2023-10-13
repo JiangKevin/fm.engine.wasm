@@ -87,10 +87,15 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
     {
         char  cwd[ 100 ];
         char* ret;
-        // chdir( "/temp" );
-        // ret = getcwd( cwd, sizeof( cwd ) );
-        // assert( ret == cwd );
-        // printf( "Current working dir: %s\n", cwd );
+        int   result;
+        result = access( "/temp", F_OK );
+        if ( result != 0 )
+        {
+            mkdir( "temp", 0777 );
+            ret = getcwd( cwd, sizeof( cwd ) );
+            assert( ret == cwd );
+            log_info( "Current working dir: %s", cwd );
+        }
         //
         char zip_name_no_ext[ 100 ] = "";
         sprintf( zip_name_no_ext, "/temp/%s.zip", user_data->bn_ptr->fileName.c_str() );
@@ -108,18 +113,9 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
 
         if ( is_zip_ok == 0 )
         {
-            // chdir( "/" );
-            // ret = getcwd( cwd, sizeof( cwd ) );
-            // assert( ret == cwd );
-            // printf( "Current working dir: %s\n", cwd );
-            //
-            // chdir( "/assets" );
-            // ret = getcwd( cwd, sizeof( cwd ) );
-            // assert( ret == cwd );
-            // printf( "Current working dir: %s\n", cwd );
             //
             sprintf( model_file_name, "/temp/%s/%s.%s", user_data->bn_ptr->fileName.c_str(), user_data->bn_ptr->fileName.c_str(), user_data->bn_ptr->mould_file_type.c_str() );
-            int result = access( model_file_name, F_OK );
+            result = access( model_file_name, F_OK );
             if ( result == 0 )
             {
                 log_info( "unzip file(%s) is ok", model_file_name );

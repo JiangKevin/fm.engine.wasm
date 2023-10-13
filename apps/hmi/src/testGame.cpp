@@ -12,15 +12,6 @@ void TestGame::update( Input* input, std::chrono::microseconds delta )
 
 void TestGame::init( GLManager* glManager )
 {
-
-    char  cwd[ 100 ];
-    char* ret;
-    // chdir( "assets" );
-    mkdir( "temp", 0777 );
-    ret = getcwd( cwd, sizeof( cwd ) );
-    assert( ret == cwd );
-    log_info( "Current working dir: %s", cwd );
-
     // 隐藏原生ui
     auto m_gui = getEngine()->getWindow()->getGuiManager();
     m_gui->togglePropertyEditor();
@@ -52,7 +43,7 @@ void TestGame::init( GLManager* glManager )
     // money.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.05f, 100.0f );
     // money.getEntity()->addComponent< SphereCollider >( 1, 1 );
     // addToScene( money.getEntity() );
-    // MeshLoader money5( "monkey", true, this, "obj" );
+    MeshLoader money5( "monkey", true, this, "obj" );
     //
     MeshLoader money2( "AncientUgandan.obj" );
     money2.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.8f, 100.0f );

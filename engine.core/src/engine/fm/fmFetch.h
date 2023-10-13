@@ -144,14 +144,13 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
                 // 加载场景资源
                 if ( user_data->bn_ptr->ml_ptr )
                 {
-                    printf( "+++++++++++++ file(%s) scene(%d) numMeshes(%d) \n", model_file_name, scene, scene->mNumMeshes );
                     user_data->bn_ptr->ml_ptr->loadScene( scene, model_file_name, true );
                 }
-                // /**/
-                // // 添加默认的坐标与碰撞信息
-                // user_data->bn_ptr->ml_ptr->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
-                // user_data->bn_ptr->ml_ptr->getEntity()->addComponent< SphereCollider >( 1, 1 );
-                // user_data->bn_ptr->game_ptr->addToScene( user_data->bn_ptr->ml_ptr->getEntity() );
+                /**/
+                // 添加默认的坐标与碰撞信息
+                user_data->bn_ptr->ml_ptr->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 0 ) );
+                user_data->bn_ptr->ml_ptr->getEntity()->addComponent< SphereCollider >( 1, 1 );
+                user_data->bn_ptr->game_ptr->addToScene( user_data->bn_ptr->ml_ptr->getEntity() );
             }
         }
         // 释放内存

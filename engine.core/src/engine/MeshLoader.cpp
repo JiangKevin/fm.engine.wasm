@@ -123,7 +123,7 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
         }
 
         const aiMaterial* pMaterial = scene->mMaterials[ model->mMaterialIndex ];
-        log_info( "tex num: %s : %i", tag.c_str(), model->mMaterialIndex );
+        log_info( "Tex num: %s : %i", tag.c_str(), model->mMaterialIndex );
         /**/
         std::shared_ptr< Texture > diffuseMap;
         std::shared_ptr< Texture > normalMap;
@@ -136,19 +136,19 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
         {
             if ( fromHttp == false )  // From filesystem
             {
-                log_info( "diffuseMap tex path: %s From filesystem", Path.data );
+                log_info( "DiffuseMap tex path: %s From filesystem", Path.data );
                 diffuseMap = std::make_shared< Texture >( Asset( Path.data ) );
             }
             else
             {
-                log_info( "diffuseMap tex path: %s From Http", Path.data );
+                log_info( "DiffuseMap tex path: %s From Http", Path.data );
                 sprintf( new_path, "/temp/monkey/%s", Path.data );
                 diffuseMap = std::make_shared< Texture >( Asset( new_path, true ) );
             }
         }
         else
         {
-            log_info( "diffuseMap tex path: %s for default", Path.data );
+            log_info( "DiffuseMap tex path: %s for default", Path.data );
             diffuseMap = std::make_shared< Texture >( Asset( "default_normal.jpg" ) );
         }
         /**/
@@ -156,19 +156,19 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
         {
             if ( fromHttp == false )  // From filesystem
             {
-                log_info( "normalMap tex path: %s From filesystem", Path.data );
+                log_info( "NormalMap tex path: %s From filesystem", Path.data );
                 normalMap = std::make_shared< Texture >( Asset( Path.data ) );
             }
             else
             {
-                log_info( "normalMap tex path: %s From http", Path.data );
+                log_info( "NormalMap tex path: %s From http", Path.data );
                 sprintf( new_path, "/temp/monkey/%s", Path.data );
                 normalMap = std::make_shared< Texture >( Asset( new_path, true ) );
             }
         }
         else
         {
-            log_info( "normalMap tex path: %s for default", Path.data );
+            log_info( "NormalMap tex path: %s for default", Path.data );
             normalMap = std::make_shared< Texture >( Asset( "default_normal.jpg" ) );
         }
         /**/
@@ -176,19 +176,19 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
         {
             if ( fromHttp == false )  // From filesystem
             {
-                log_info( "specularMap tex path: %s From filesystem", Path.data );
+                log_info( "SpecularMap tex path: %s From filesystem", Path.data );
                 specularMap = std::make_shared< Texture >( Asset( Path.data ) );
             }
             else
             {
-                log_info( "specularMap tex path: %s From http", Path.data );
+                log_info( "SpecularMap tex path: %s From http", Path.data );
                 sprintf( new_path, "/temp/monkey/%s", Path.data );
                 specularMap = std::make_shared< Texture >( Asset( new_path, true ) );
             }
         }
         else
         {
-            log_info( "specularMap tex path: %s for default", Path.data );
+            log_info( "SpecularMap tex path: %s for default", Path.data );
             specularMap = std::make_shared< Texture >( Asset( "default_specular.jpg" ) );
         }
         //

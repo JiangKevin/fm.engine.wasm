@@ -116,7 +116,6 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
             create_file( zip_name_no_ext, fetch->data, fetch->numBytes, 0777 );
             is_zip_ok = zip_tool_entrance( 6, cmd_par );
         }
-
         //
         if ( is_zip_ok == 0 )
         {
@@ -125,14 +124,14 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
             result = access( model_file_name, F_OK );
             if ( result == 0 )
             {
-                log_info( "unzip file(%s) is ok", model_file_name );
+                log_info( "Unzip file(%s) is ok", model_file_name );
                 CustomIOSystem* cisys_ptr = new CustomIOSystem( true );
                 // cisys_ptr->plush();
                 user_data->bn_ptr->importer->SetIOHandler( cisys_ptr );
             }
             else
             {
-                log_info( "unzip file(%s) is noe ok !!!!", model_file_name );
+                log_info( "Unzip file(%s) is noe ok !!!!", model_file_name );
             }
             //
             const aiScene* scene = user_data->bn_ptr->importer->ReadFile( model_file_name, user_data->bn_ptr->assimpOptimizeFlags );
@@ -143,7 +142,7 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
             }
             else
             {
-                log_info( "load mesh: %s from Fetch fileSystem", model_file_name );
+                log_info( "Load mesh: %s from Fetch fileSystem", model_file_name );
                 // 加载场景资源
                 if ( user_data->bn_ptr->ml_ptr )
                 {

@@ -27,7 +27,7 @@ public:
     ~MeshLoader( void );
     std::shared_ptr< Entity > getEntity( void ) const;
     /**/
-    void loadScene( const aiScene* scene, std::string tag = "", bool fromHttp = false, std::string extension = "obj" );
+    void loadScene( const aiScene* scene, std::string tag = "", bool fromHttp = false, std::string extension = "obj", std::string mid_folder = "monkey" );
     /**/
     Game* game_ptr;
 private:

@@ -43,7 +43,7 @@ void TestGame::init( GLManager* glManager )
     // money.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.05f, 100.0f );
     // money.getEntity()->addComponent< SphereCollider >( 1, 1 );
     // addToScene( money.getEntity() );
-    MeshLoader money5( "monkey", true, this, "obj" );
+    MeshLoader money5( "AncientUgandan", true, this, "obj" );
     //
     MeshLoader money2( "AncientUgandan.obj" );
     money2.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.8f, 100.0f );

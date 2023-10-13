@@ -108,7 +108,7 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
         sprintf( inZipPath, "/temp/%s.zip", user_data->bn_ptr->fileName.c_str() );
         const char* cmd_par[] = { "./fm_zip", "-x", "-o", "-d", out_folder, inZipPath };
         int         is_zip_ok;
-        access( zip_name_no_ext, F_OK );
+        result = access( zip_name_no_ext, F_OK );
         // 如果temp中不存在下载的文件，创建zip，并解压缩到相应文件夹下
         if ( result != 0 )
         {
@@ -146,13 +146,13 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
                 // 加载场景资源
                 if ( user_data->bn_ptr->ml_ptr )
                 {
-                    user_data->bn_ptr->ml_ptr->loadScene( scene, model_file_name, true );
+                    user_data->bn_ptr->ml_ptr->loadScene( scene, model_file_name, true, user_data->bn_ptr->mould_file_type, user_data->bn_ptr->fileName.c_str() );
+                    /**/
+                    // 添加默认的坐标与碰撞信息
+                    user_data->bn_ptr->ml_ptr->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 0 ) );
+                    user_data->bn_ptr->ml_ptr->getEntity()->addComponent< SphereCollider >( 1, 1 );
+                    user_data->bn_ptr->game_ptr->addToScene( user_data->bn_ptr->ml_ptr->getEntity() );
                 }
-                /**/
-                // 添加默认的坐标与碰撞信息
-                user_data->bn_ptr->ml_ptr->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 0 ) );
-                user_data->bn_ptr->ml_ptr->getEntity()->addComponent< SphereCollider >( 1, 1 );
-                user_data->bn_ptr->game_ptr->addToScene( user_data->bn_ptr->ml_ptr->getEntity() );
             }
         }
         // 释放内存

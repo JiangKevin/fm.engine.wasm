@@ -87,8 +87,10 @@ std::shared_ptr< Entity > MeshLoader::getEntity( void ) const
     return m_entity;
 }
 
-void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp, std::string extension )
+void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp, std::string extension, std::string mid_folder )
 {
+    debug( "Mid_folder: %s ", mid_folder.c_str() );
+
     char  cwd[ 100 ];
     char* ret;
     //
@@ -142,7 +144,7 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
             else
             {
                 debug( "DiffuseMap tex path: %s From Http", Path.data );
-                sprintf( new_path, "/temp/monkey/%s", Path.data );
+                sprintf( new_path, "/temp/%s/%s", mid_folder.c_str(), Path.data );
                 diffuseMap = std::make_shared< Texture >( Asset( new_path, true ) );
             }
         }
@@ -162,7 +164,7 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
             else
             {
                 debug( "NormalMap tex path: %s From http", Path.data );
-                sprintf( new_path, "/temp/monkey/%s", Path.data );
+                sprintf( new_path, "/temp/%s/%s", mid_folder.c_str(), Path.data );
                 normalMap = std::make_shared< Texture >( Asset( new_path, true ) );
             }
         }
@@ -182,7 +184,7 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
             else
             {
                 debug( "SpecularMap tex path: %s From http", Path.data );
-                sprintf( new_path, "/temp/monkey/%s", Path.data );
+                sprintf( new_path, "/temp/%s/%s", mid_folder.c_str(), Path.data );
                 specularMap = std::make_shared< Texture >( Asset( new_path, true ) );
             }
         }

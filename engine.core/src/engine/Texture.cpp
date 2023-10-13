@@ -14,8 +14,6 @@ Texture::Texture( const Asset& file, GLenum textureTarget, GLfloat filter )
 {
     auto it = m_textureCache.find( file.getIOStream()->getFileName() );
     //
-    log_info( "From Texture file(%s)", file.getIOStream()->getFileName().c_str() );
-    //
     if ( it == m_textureCache.end() || ! ( m_textureData = it->second.lock() ) )
     {
         int x, y, bytesPerPixel;

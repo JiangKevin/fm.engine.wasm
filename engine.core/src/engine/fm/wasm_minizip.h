@@ -10,6 +10,7 @@
    See the accompanying LICENSE file for the full text of the license.
 */
 #pragma once
+#include "Logger.h"
 #include "mz.h"
 #include "mz_os.h"
 #include "mz_strm.h"
@@ -21,7 +22,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <vector>
-#include "Logger.h"
 using namespace std;
 /***************************************************************************/
 

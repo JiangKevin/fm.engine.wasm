@@ -131,9 +131,6 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
         aiString                   Path;
         char                       new_path[ 2048 ] = "";
         /**/
-        int get_texture_for_diffuse       = pMaterial->GetTexture( aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL );
-        int get_texture_for_diffuse_count = pMaterial->GetTextureCount( aiTextureType_DIFFUSE );
-        log_info( "diffuseMap : ok(%d) ,%d : %s From filesystem", get_texture_for_diffuse, get_texture_for_diffuse_count, Path.data );
         //
         if ( pMaterial->GetTextureCount( aiTextureType_DIFFUSE ) > 0 && pMaterial->GetTexture( aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL ) == AI_SUCCESS )
         {

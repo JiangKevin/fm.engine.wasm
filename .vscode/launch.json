@@ -6,8 +6,8 @@
       "type": "lldb",
       "request": "launch",
       "args": [],
-      "cwd": "/Users/kevin.jiang/Dev/src/github-res/fm.engine/apps/hmi/src",
-      "program": "/Users/kevin.jiang/Dev/src/github-res/fm.engine/apps/hmi/src/build/Debug/outDebug"
+      "cwd": "/Users/kevin.jiang/Dev/src/github-res/fm.engine.wasm/engine.core/src/engine",
+      "program": "/Users/kevin.jiang/Dev/src/github-res/fm.engine.wasm/engine.core/src/engine/build/Debug/outDebug"
     }
   ]
 }

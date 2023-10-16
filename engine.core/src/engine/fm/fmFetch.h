@@ -42,17 +42,21 @@ enum node_draw_type
 /**/
 struct blob_node
 {
-    Game*             game_ptr;
-    Assimp::Importer* importer;
-    MeshLoader*       ml_ptr;
-    bool              isload              = false;
-    node_draw_type    draw_type           = DRAW_FACE;
-    bool              isTexRepeat         = true;
-    string            url                 = "AncientUgandan.obj";
-    string            fileName            = "monkey3";
-    string            mould_file_type     = "obj";
-    string            uuid                = "";
-    int               assimpOptimizeFlags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace;
+    // Game* game_ptr;
+    // Assimp::Importer* importer;
+
+    std::shared_ptr< Assimp::Importer > importer;
+    MeshLoader*                         ml_ptr;
+    // std::shared_ptr< MeshLoader >       ml_ptr;
+
+    bool           isload              = false;
+    node_draw_type draw_type           = DRAW_FACE;
+    bool           isTexRepeat         = true;
+    string         url                 = "AncientUgandan.obj";
+    string         fileName            = "monkey3";
+    string         mould_file_type     = "obj";
+    string         uuid                = "";
+    int            assimpOptimizeFlags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace;
 };
 /**/
 struct blob_image
@@ -71,9 +75,9 @@ void create_file( const char* path, const char* buffer, int size, int mode )
 /**/
 struct fecthRequest
 {
-    fetch_reponse_type dataType;
-    blob_node*         bn_ptr;
-    blob_image*        bi_ptr;
+    fetch_reponse_type            dataType;
+    std::shared_ptr< blob_node >  bn_ptr;
+    std::shared_ptr< blob_image > bi_ptr;
 };
 /**/
 void downloadSucceeded( emscripten_fetch_t* fetch )
@@ -144,12 +148,21 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
                 // 加载场景资源
                 if ( user_data->bn_ptr->ml_ptr )
                 {
+                    debug( "Reponse ml_ptl %u From http", user_data->bn_ptr->ml_ptr );
                     user_data->bn_ptr->ml_ptr->loadScene( scene, model_file_name, true, user_data->bn_ptr->mould_file_type, user_data->bn_ptr->fileName.c_str() );
-                    /**/
-                    // 添加默认的坐标与碰撞信息
-                    user_data->bn_ptr->ml_ptr->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 0 ) );
-                    user_data->bn_ptr->ml_ptr->getEntity()->addComponent< SphereCollider >( 1, 1 );
-                    user_data->bn_ptr->game_ptr->addToScene( user_data->bn_ptr->ml_ptr->getEntity() );
+                    user_data->bn_ptr->ml_ptr->is_load = true;
+
+                    // // user_data->bn_ptr->isload          = true;
+                    // user_data->bn_ptr->ml_ptr->entity_creat( user_data->bn_ptr->fileName, model_file_name, true );
+
+                    // /**/
+                    // // 添加默认的坐标与碰撞信息
+                    // user_data->bn_ptr->ml_ptr->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 0 ) );
+                    // user_data->bn_ptr->ml_ptr->getEntity()->addComponent< SphereCollider >( 1, 1 );
+                    // user_data->bn_ptr->game_ptr->addToScene( user_data->bn_ptr->ml_ptr->getEntity() );
+
+                    // 释放assimp importer内存
+                    // free(user_data->bn_ptr->importer);
                 }
             }
         }
@@ -159,6 +172,7 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
         free( cmd_par );
     }
     /**/
+    free( user_data );
     emscripten_fetch_close( fetch );
 }
 

@@ -5,13 +5,13 @@
 #include "Entity.h"
 #include "Component.h"
 #include <algorithm>
+#include "Logger.h"
 
 std::map< std::string, std::vector< Entity* > > Entity::taggedEntities;
 
 Entity::Entity( const std::string& tag )
 {
     Entity::setTag( this, tag );
-
     m_tag        = tag;
     parentEntity = nullptr;
 }

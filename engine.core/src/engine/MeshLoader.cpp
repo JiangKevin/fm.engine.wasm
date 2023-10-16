@@ -8,6 +8,7 @@
 #include "Logger.h"
 #include "components/MeshRenderer.h"
 #include "fm/fmFetch.h"
+#include "fm/uuid_generate.h"
 #include <algorithm>
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
@@ -17,66 +18,63 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
+//
+using namespace uuid;
 // TODO: need to come back and refactor this, make it load on a seperate thread.
 std::map< std::string, std::vector< MeshRendererData > > MeshLoader::sceneMeshRendererDataCache;
 
-MeshLoader::MeshLoader( const std::string file, bool fromHttp, Game* gamePtr, std::string extension )
+MeshLoader::MeshLoader( const std::string file, bool fromHttp, std::string extension )
 {
-    char  cwd[ 100 ];
-    char* ret;
     /**/
-    game_ptr = gamePtr;
+    // game_ptr = gamePtr;
     /**/
-    m_fileName = file;
-
-    if ( MeshLoader::sceneMeshRendererDataCache[ m_fileName ].size() > 0 )
+    string real_filename;
+    if ( fromHttp == false )
     {
-        m_entity = std::make_shared< Entity >( m_fileName );
-        // m_entity->updateTag( m_fileName );
-        for ( auto meshRenderData : MeshLoader::sceneMeshRendererDataCache[ m_fileName ] )
+        m_fileName    = file;
+        real_filename = file;
+    }
+    else
+    {
+        m_fileName    = file + "." + extension;
+        real_filename = file + "." + extension;
+    }
+    // 验证来源
+    if ( fromHttp == false )
+    {
+        debug( "Loading mesh: %s From fileSystem", file.c_str() );
+        Assimp::Importer importer;
+        importer.SetIOHandler( new CustomIOSystem() );
+        const aiScene* scene = importer.ReadFile( file, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace );
+        //
+        if ( ! scene )
         {
-            m_entity->addComponent< MeshRenderer >( meshRenderData.mesh, meshRenderData.material );
+            log_err( "Failed to load mesh: %s", file.c_str() );
+        }
+        else
+        {
+            loadScene( scene, file );
         }
     }
     else
     {
-        // 验证来源
-        if ( fromHttp == false )
-        {
-            debug( "Loading mesh: %s From fileSystem", file.c_str() );
-            Assimp::Importer importer;
-            importer.SetIOHandler( new CustomIOSystem() );
-            const aiScene* scene = importer.ReadFile( file, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace );
-            //
-            if ( ! scene )
-            {
-                log_err( "Failed to load mesh: %s", file.c_str() );
-            }
-            else
-            {
-                loadScene( scene, file );
-            }
-        }
-        else
-        {
-            debug( "Loading mesh: %s From http", file.c_str() );
-            /**/
-            Assimp::Importer* importer = new Assimp::Importer();
-            // importer->SetIOHandler( new CustomIOSystem( true ) );
-            blob_node* bn_ptr       = new blob_node();
-            bn_ptr->game_ptr        = game_ptr;
-            bn_ptr->ml_ptr          = this;
-            bn_ptr->url             = "./assets/" + m_fileName + ".zip";
-            bn_ptr->fileName        = m_fileName;
-            bn_ptr->importer        = importer;
-            bn_ptr->mould_file_type = "obj";
-            /**/
-            fecthRequest* mRequest = new fecthRequest();
-            mRequest->bn_ptr       = bn_ptr;
-            mRequest->dataType     = FETCH_ZIP;
-            /***/
-            create_http_fetch( mRequest );
-        }
+        debug( "Loading mesh: %s From http", file.c_str() );
+        debug( "Request ml_ptl %u From http", this );
+        /**/
+        auto importer = std::make_shared< Assimp::Importer >();
+        auto bn_ptr   = std::make_shared< blob_node >();
+        // bn_ptr->game_ptr        = game_ptr;
+        bn_ptr->ml_ptr          = this;
+        bn_ptr->url             = "./assets/" + file + ".zip";
+        bn_ptr->fileName        = file;
+        bn_ptr->importer        = importer;
+        bn_ptr->mould_file_type = "obj";
+        /**/
+        fecthRequest* mRequest = new fecthRequest();
+        mRequest->bn_ptr       = bn_ptr;
+        mRequest->dataType     = FETCH_ZIP;
+        /***/
+        create_http_fetch( mRequest );
     }
 }
 
@@ -91,11 +89,6 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
 {
     debug( "Mid_folder: %s ", mid_folder.c_str() );
 
-    char  cwd[ 100 ];
-    char* ret;
-    //
-    m_entity = std::make_shared< Entity >( tag );
-    // m_entity->updateTag( tag );
     //
     for ( int i = 0; i < scene->mNumMeshes; i++ )
     {
@@ -198,11 +191,48 @@ void MeshLoader::loadScene( const aiScene* scene, std::string tag, bool fromHttp
         //
         if ( ( vertices.size() > 0 ) && ( indices.size() > 0 ) )
         {
-            meshRenderData.mesh = std::make_shared< Mesh >( m_fileName + std::string( model->mName.C_Str() ), &vertices[ 0 ], vertices.size(), &indices[ 0 ], indices.size() );
-            //
+            meshRenderData.mesh     = std::make_shared< Mesh >( tag + std::string( model->mName.C_Str() ), &vertices[ 0 ], vertices.size(), &indices[ 0 ], indices.size() );
             meshRenderData.material = std::make_shared< Material >( diffuseMap, normalMap, specularMap );
-            MeshLoader::sceneMeshRendererDataCache[ m_fileName ].push_back( meshRenderData );
-            m_entity->addComponent< MeshRenderer >( meshRenderData.mesh, meshRenderData.material );
+            //
+            debug( "SceneMeshRendererDataCache[%s] size(%d) at use http", tag.c_str(), MeshLoader::sceneMeshRendererDataCache[ tag ].size() );
+            if ( MeshLoader::sceneMeshRendererDataCache[ tag ].size() == 0 )
+            {
+                debug( "Add SceneMeshRendererDataCache[%s] at use http", tag.c_str() );
+                MeshLoader::sceneMeshRendererDataCache[ tag ].push_back( meshRenderData );
+            }
         }
+    }
+}
+
+void MeshLoader::entity_creat( std::string tag, std::string meshcache_tag, bool fromHttp )
+{
+    //
+    string o_tag;
+    if ( fromHttp )
+    {
+        // o_tag = tag + "-" + "HTTP-" + generate_uuid_v4();
+        o_tag = tag;
+    }
+    else
+    {
+        o_tag = tag + "-" + "FILE-" + generate_uuid_v4();
+    }
+    debug( "Tag: %s , %s", o_tag.c_str(), meshcache_tag.c_str() );
+    if ( m_entity == nullptr )
+    {
+        debug( "m_entity==nullptr" );
+        m_entity = std::make_shared< Entity >();
+        m_entity->updateTag( o_tag );
+    }
+    //
+    for ( auto i = MeshLoader::sceneMeshRendererDataCache.begin(); i != MeshLoader::sceneMeshRendererDataCache.end(); ++i )
+    {
+        debug( "SceneMeshRendererDataCache: -> %s", i->first.c_str() );
+    }
+    //
+    for ( auto meshRenderData : MeshLoader::sceneMeshRendererDataCache[ meshcache_tag ] )
+    {
+        m_entity->addComponent< MeshRenderer >( meshRenderData.mesh, meshRenderData.material );
+        is_created = true;
     }
 }

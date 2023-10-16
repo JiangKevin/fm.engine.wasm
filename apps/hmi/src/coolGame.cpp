@@ -173,8 +173,8 @@ void CoolGame::init( GLManager* glManager )
         addToScene( plane );
     }
     //
-    MeshLoader ml( "AncientUgandan", true, this, "obj" );
-    MeshLoader ml1( "monkey", true, this, "obj" );
+    MeshLoader ml( "AncientUgandan", true, "obj" );
+    MeshLoader ml1( "monkey", true, "obj" );
     // for ( int i = 0; i < 1; i++ )
     // {
     //     MeshLoader ml( "AncientUgandan", true, this, "obj" );

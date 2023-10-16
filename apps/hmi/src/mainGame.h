@@ -37,7 +37,7 @@ public:
 
     std::shared_ptr< PerspectiveCamera > primary_camera;
     std::shared_ptr< SpotLight >         s_light;
-    // std::shared_ptr< PerspectiveCamera > primary_camera2;
+    std::shared_ptr< PerspectiveCamera > primary_camera2;
 public:
     std::vector< mesh_model > _model_array;
     void                      init_model();

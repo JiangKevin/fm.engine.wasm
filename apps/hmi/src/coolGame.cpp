@@ -13,20 +13,7 @@ void CoolGame::update( Input* input, std::chrono::microseconds delta )
 void CoolGame::init( GLManager* glManager )
 {
 
-    char  cwd[ 100 ];
-    char* ret;
-    // chdir( "assets" );
-    mkdir( "temp", 0777 );
-    ret = getcwd( cwd, sizeof( cwd ) );
-    assert( ret == cwd );
-    printf( "From wasm: Current working dir: %s\n", cwd );
-
-    // 隐藏原生ui
-    auto m_gui = getEngine()->getWindow()->getGuiManager();
-    m_gui->togglePropertyEditor();
-    // 获取输入
     auto input = getEngine()->getWindow()->getInput();
-
     input->registerKeyToAction( SDLK_SPACE, "fire" );
     input->registerKeyToAction( SDLK_c, "swapCamera" );
 
@@ -58,7 +45,6 @@ void CoolGame::init( GLManager* glManager )
     // ground
     {
         auto plane = std::make_shared< Entity >();
-        plane->updateTag( "ground 1" );
         plane->addComponent< MeshRenderer >( planeMesh, brickMat );
         plane->getTransform().setPosition( glm::vec3( -5, -2, 0 ) ).setScale( glm::vec3( 10, 1, 10 ) );
         plane->addComponent< BoxCollider >( glm::vec3( 5, 0, 5 ), 0 );
@@ -67,7 +53,6 @@ void CoolGame::init( GLManager* glManager )
     }
     {
         auto plane = std::make_shared< Entity >();
-        plane->updateTag( "ground 2" );
         plane->addComponent< MeshRenderer >( planeMesh, brickMat );
         plane->getTransform().setPosition( glm::vec3( 5, -2, 0 ) ).setScale( glm::vec3( 10, 1, 10 ) );
         plane->addComponent< BoxCollider >( glm::vec3( 5, 0, 5 ), 0 );
@@ -76,7 +61,6 @@ void CoolGame::init( GLManager* glManager )
     }
     {
         auto plane = std::make_shared< Entity >();
-        plane->updateTag( "ground 3" );
         plane->addComponent< MeshRenderer >( planeMesh, brickMat );
         plane->getTransform().setPosition( glm::vec3( -5, -2, 10 ) ).setScale( glm::vec3( 10, 1, 10 ) );
         plane->addComponent< BoxCollider >( glm::vec3( 5, 0, 5 ), 0 );
@@ -85,7 +69,6 @@ void CoolGame::init( GLManager* glManager )
     }
     {
         auto plane = std::make_shared< Entity >();
-        plane->updateTag( "ground 4" );
         plane->addComponent< MeshRenderer >( planeMesh, brickMat );
         plane->getTransform().setPosition( glm::vec3( 5, -2, 10 ) ).setScale( glm::vec3( 10, 1, 10 ) );
         plane->addComponent< BoxCollider >( glm::vec3( 5, 0, 5 ), 0 );
@@ -96,7 +79,6 @@ void CoolGame::init( GLManager* glManager )
     // front wall
     {
         auto plane = std::make_shared< Entity >();
-        plane->updateTag( "front wall 1" );
         plane->addComponent< MeshRenderer >( planeMesh, brickMat );
         plane->getTransform().setPosition( glm::vec3( -5, 3, -5 ) ).setScale( glm::vec3( 10, 1, 10 ) ).rotate( glm::vec3( 1, 0, 0 ), glm::pi< float >() / 2.f );
         plane->addComponent< BoxCollider >( glm::vec3( 5, 0, 5 ), 0 );
@@ -105,7 +87,6 @@ void CoolGame::init( GLManager* glManager )
     }
     {
         auto plane = std::make_shared< Entity >();
-        plane->updateTag( "front wall 2" );
         plane->addComponent< MeshRenderer >( planeMesh, brickMat );
         plane->getTransform().setPosition( glm::vec3( 5, 3, -5 ) ).setScale( glm::vec3( 10, 1, 10 ) ).rotate( glm::vec3( 1, 0, 0 ), glm::pi< float >() / 2.f );
         plane->addComponent< BoxCollider >( glm::vec3( 5, 0, 5 ), 0 );
@@ -116,7 +97,6 @@ void CoolGame::init( GLManager* glManager )
     // back wall
     {
         auto plane = std::make_shared< Entity >();
-        plane->updateTag( "back wall 1" );
         plane->addComponent< MeshRenderer >( planeMesh, brickMat );
         plane->getTransform().setPosition( glm::vec3( -5, 3, 15 ) ).setScale( glm::vec3( 10, 1, 10 ) ).rotate( glm::vec3( 1, 0, 0 ), -glm::pi< float >() / 2.f );
         plane->addComponent< BoxCollider >( glm::vec3( 5, 0, 5 ), 0 );
@@ -125,7 +105,6 @@ void CoolGame::init( GLManager* glManager )
     }
     {
         auto plane = std::make_shared< Entity >();
-        plane->updateTag( "back wall 2" );
         plane->addComponent< MeshRenderer >( planeMesh, brickMat );
         plane->getTransform().setPosition( glm::vec3( 5, 3, 15 ) ).setScale( glm::vec3( 10, 1, 10 ) ).rotate( glm::vec3( 1, 0, 0 ), -glm::pi< float >() / 2.f );
         plane->addComponent< BoxCollider >( glm::vec3( 5, 0, 5 ), 0 );
@@ -136,7 +115,6 @@ void CoolGame::init( GLManager* glManager )
     // left wall
     {
         auto plane = std::make_shared< Entity >();
-        plane->updateTag( "left wall 1" );
         plane->addComponent< MeshRenderer >( planeMesh, brickMat );
         plane->getTransform().setPosition( glm::vec3( -10, 3, 0 ) ).setScale( glm::vec3( 10, 1, 10 ) ).rotate( glm::vec3( 0, 0, 1 ), -glm::pi< float >() / 2.f );
         plane->addComponent< BoxCollider >( glm::vec3( 5, 0, 5 ), 0 );
@@ -145,7 +123,6 @@ void CoolGame::init( GLManager* glManager )
     }
     {
         auto plane = std::make_shared< Entity >();
-        plane->updateTag( "left wall 2" );
         plane->addComponent< MeshRenderer >( planeMesh, brickMat );
         plane->getTransform().setPosition( glm::vec3( -10, 3, 10 ) ).setScale( glm::vec3( 10, 1, 10 ) ).rotate( glm::vec3( 0, 0, 1 ), -glm::pi< float >() / 2.f );
         plane->addComponent< BoxCollider >( glm::vec3( 5, 0, 5 ), 0 );
@@ -156,7 +133,6 @@ void CoolGame::init( GLManager* glManager )
     // right wall
     {
         auto plane = std::make_shared< Entity >();
-        plane->updateTag( "right wall 1" );
         plane->addComponent< MeshRenderer >( planeMesh, brickMat );
         plane->getTransform().setPosition( glm::vec3( 10, 3, 0 ) ).setScale( glm::vec3( 10, 1, 10 ) ).rotate( glm::vec3( 0, 0, 1 ), glm::pi< float >() / 2.f );
         plane->addComponent< BoxCollider >( glm::vec3( 5, 0, 5 ), 0 );
@@ -165,23 +141,20 @@ void CoolGame::init( GLManager* glManager )
     }
     {
         auto plane = std::make_shared< Entity >();
-        plane->updateTag( "right wall 2" );
         plane->addComponent< MeshRenderer >( planeMesh, brickMat );
         plane->getTransform().setPosition( glm::vec3( 10, 3, 10 ) ).setScale( glm::vec3( 10, 1, 10 ) ).rotate( glm::vec3( 0, 0, 1 ), glm::pi< float >() / 2.f );
         plane->addComponent< BoxCollider >( glm::vec3( 5, 0, 5 ), 0 );
 
         addToScene( plane );
     }
-    //
-    MeshLoader ml( "AncientUgandan", true, "obj" );
-    MeshLoader ml1( "monkey", true, "obj" );
-    // for ( int i = 0; i < 1; i++ )
-    // {
-    //     MeshLoader ml( "AncientUgandan", true, this, "obj" );
-    //     // ml.getEntity()->getTransform().setPosition( glm::vec3( 0, i * 3, -2.5 ) );
-    //     // ml.getEntity()->addComponent< SphereCollider >( 1, 1 );
-    //     // addToScene( ml.getEntity() );
-    // }
+
+    for ( int i = 0; i < 10; i++ )
+    {
+        MeshLoader ml( "AncientUgandan.obj" );
+        ml.getEntity()->getTransform().setPosition( glm::vec3( 0, i * 3, -2.5 ) );
+        ml.getEntity()->addComponent< SphereCollider >( 1, 1 );
+        addToScene( ml.getEntity() );
+    }
 
     MeshLoader money( "monkey3.obj" );
     money.getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
@@ -193,7 +166,6 @@ void CoolGame::init( GLManager* glManager )
     money2.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.8f, 100.0f );
     money2.getEntity()->addComponent< FreeMove >();
     money2.getEntity()->addComponent< FreeLook >();
-    // money2.getEntity()->addComponent< SphereCollider >( 1, 1 );
     money2.getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 5 ) ).setScale( glm::vec3( 0.8, 0.8, 0.8 ) );
     money2.getEntity()->addComponent< SpotLight >( glm::vec3( 1.0f, 1.0f, 1.0f ), 2.8f, 0.7f, std::make_shared< Attenuation >( 0, 0, 0.2 ) );
 

@@ -23,13 +23,12 @@ using namespace std;
 //
 struct mesh_model
 {
-    string _tag;
-    string _meshcache_tag;
-    // shared_ptr< MeshLoader > _ml;
+    string      _tag;
+    string      _meshcache_tag;
     MeshLoader* _ml;
 };
 //
-class TestGame : public Game
+class MainGame : public Game
 {
 public:
     virtual void init( GLManager* glManager );
@@ -43,4 +42,5 @@ public:
     std::vector< mesh_model > _model_array;
     void                      init_model();
     void                      add_model( const std::string file, bool fromHttp = false, std::string extension = "obj" );
+    void                      create_model();
 };

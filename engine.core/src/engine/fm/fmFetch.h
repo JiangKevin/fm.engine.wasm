@@ -151,18 +151,6 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
                     debug( "Reponse ml_ptl %u From http", user_data->bn_ptr->ml_ptr );
                     user_data->bn_ptr->ml_ptr->loadScene( scene, model_file_name, true, user_data->bn_ptr->mould_file_type, user_data->bn_ptr->fileName.c_str() );
                     user_data->bn_ptr->ml_ptr->is_load = true;
-
-                    // // user_data->bn_ptr->isload          = true;
-                    // user_data->bn_ptr->ml_ptr->entity_creat( user_data->bn_ptr->fileName, model_file_name, true );
-
-                    // /**/
-                    // // 添加默认的坐标与碰撞信息
-                    // user_data->bn_ptr->ml_ptr->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 0 ) );
-                    // user_data->bn_ptr->ml_ptr->getEntity()->addComponent< SphereCollider >( 1, 1 );
-                    // user_data->bn_ptr->game_ptr->addToScene( user_data->bn_ptr->ml_ptr->getEntity() );
-
-                    // 释放assimp importer内存
-                    // free(user_data->bn_ptr->importer);
                 }
             }
         }

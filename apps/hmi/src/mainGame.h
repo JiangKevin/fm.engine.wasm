@@ -39,8 +39,9 @@ public:
     std::shared_ptr< SpotLight >         s_light;
     std::shared_ptr< PerspectiveCamera > primary_camera2;
 public:
-    std::vector< mesh_model > _model_array;
-    void                      init_model();
-    void                      add_model( const std::string file, bool fromHttp = false, std::string extension = "obj" );
-    void                      create_model();
+    std::vector< mesh_model >                          _model_array;
+    // std::map< std::string, std::vector< mesh_model > > _model_gather;
+    void                                               init_model();
+    void                                               add_model( const std::string file, bool fromHttp = false, std::string extension = "obj" );
+    void                                               create_model();
 };

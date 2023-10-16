@@ -15,7 +15,7 @@ void MainGame::update( Input* input, std::chrono::microseconds delta )
 void MainGame::init( GLManager* glManager )
 {
     // 隐藏原生ui
-    auto m_gui = getEngine()->getWindow()->getGuiManager(); 
+    auto m_gui = getEngine()->getWindow()->getGuiManager();
     m_gui->togglePropertyEditor();
     // 获取输入
     auto input = getEngine()->getWindow()->getInput();
@@ -135,6 +135,7 @@ void MainGame::add_model( const std::string file, bool fromHttp, std::string ext
     mm._meshcache_tag = "/temp/" + file + "/" + file + "." + extension;
     mm._ml            = ml;
     _model_array.push_back( mm );
+    // _model_gather[ mm._tag ].push_back( mm );
 }
 
 void MainGame::create_model()
@@ -149,5 +150,22 @@ void MainGame::create_model()
             _model_array[ i ]._ml->getEntity()->addComponent< SphereCollider >( 1, 1 );
             addToScene( _model_array[ i ]._ml->getEntity() );
         }
+
+        // for ( auto models = _model_gather.begin(); models != _model_gather.end(); ++i )
+        // {
+        //     // debug( "models : -> %s", models->first.c_str() );
+        //     for ( auto model : _model_gather[ models->first ] )
+        //     {
+        //         if ( ( model._ml->is_created != true ) && ( model._ml->is_load == true ) )
+        //         {
+        //             //
+        //             model._ml->is_created = true;
+        //             model._ml->entity_creat( model._tag, model._meshcache_tag, true );
+        //             model._ml->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 0 ) );
+        //             model._ml->getEntity()->addComponent< SphereCollider >( 1, 1 );
+        //             addToScene( model._ml->getEntity() );
+        //         }
+        //     }
+        // }
     }
 }

@@ -1,4 +1,5 @@
 #include "mainGame.h"
+#include "Component.h"
 #include "fm/uuid_generate.h"
 #include <stdlib.h>
 #include <string.h>
@@ -10,6 +11,23 @@ using namespace uuid;
 void MainGame::update( Input* input, std::chrono::microseconds delta )
 {
     Game::update( input, delta );
+    if ( topOrFront )
+    {
+        getEngine()->getGLManager()->setActiveCamera( top_camera );
+    }
+    else
+    {
+        getEngine()->getGLManager()->setActiveCamera( primary_camera );
+    }
+    // 移动
+    if ( m_top_lar_velocity != 0 )
+    {
+        affiliated_actor->getTransform().translate( glm::rotate( affiliated_actor->getTransform().getRotation(), glm::vec3( m_top_lar_velocity, 0.0f, 0.0f ) ) );
+    }
+    if ( m_top_uad_velocity != 0 )
+    {
+        affiliated_actor->getTransform().translate( glm::rotate( affiliated_actor->getTransform().getRotation(), glm::vec3( 0.0f, m_top_uad_velocity, 0.0f ) ) );
+    }
 }
 
 void MainGame::init( GLManager* glManager )
@@ -21,6 +39,10 @@ void MainGame::init( GLManager* glManager )
     auto input = getEngine()->getWindow()->getInput();
     input->registerKeyToAction( SDLK_SPACE, "fire" );
     input->registerKeyToAction( SDLK_c, "swapCamera" );
+
+    input->registerKeysToAxis( SDLK_KP_4, SDLK_KP_6, -1.f, 1.f, "top_leftAndRight" );
+    input->registerKeysToAxis( SDLK_KP_2, SDLK_KP_8, -1.f, 1.f, "top_upAndDown" );
+    //
     input->bindAction( "fire", IE_PRESSED,
                        [ this ]()
                        {
@@ -36,15 +58,19 @@ void MainGame::init( GLManager* glManager )
     input->bindAction( "swapCamera", IE_PRESSED,
                        [ this ]()
                        {
-                           getEngine()->getGLManager()->setActiveCamera( primary_camera2 );
+                           topOrFront = ! topOrFront;
                        } );
-
-    input->bindAction( "swapCamera", IE_RELEASED,
-                       [ this ]()
-                       {
-                           getEngine()->getGLManager()->setActiveCamera( primary_camera );
-                       } );
-
+    input->bindAxis( "top_leftAndRight",
+                     [ this ]( float value )
+                     {
+                         debug( "adsfadsf %f", value );
+                         m_top_lar_velocity = value;
+                     } );
+    input->bindAxis( "top_upAndDown",
+                     [ this ]( float value )
+                     {
+                         m_top_uad_velocity = value;
+                     } );
     //
     auto brickMat  = std::make_shared< Material >( std::make_shared< Texture >( Asset( "bricks2.jpg" ) ), std::make_shared< Texture >( Asset( "bricks2_normal.jpg" ) ), std::make_shared< Texture >( Asset( "bricks2_specular.png" ) ) );
     auto planeMesh = Plane::getMesh();
@@ -84,12 +110,12 @@ void MainGame::init( GLManager* glManager )
     }
 
     // 第二视角
-    MeshLoader affiliated_actor( "monkey3.obj" );
-    affiliated_actor.entity_creat( "monkey3", "monkey3.obj" );
-    affiliated_actor.getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 8 ) );
-    affiliated_actor.getEntity()->addComponent< PerspectiveCamera >( glm::pi< float >() / 2.0f, getEngine()->getWindow()->getWidth() / ( float )getEngine()->getWindow()->getHeight(), 0.05f, 100.0f );
-    affiliated_actor.getEntity()->addComponent< SphereCollider >( 1, 1 );
-    addToScene( affiliated_actor.getEntity() );
+    affiliated_actor = std::make_shared< Entity >( "affiliated_actor" );
+    affiliated_actor->addComponent< OrthoCamera >( 10, 3, 0.05f, 1000.0f );
+    affiliated_actor->getTransform().setPosition( glm::vec3( 0, 10, 0 ) );
+    affiliated_actor->getTransform().setRotation( glm::vec3( 1, 0, 0 ), 180 );
+    affiliated_actor->addComponent< PointLight >( glm::vec3( 1.0f, 1.0f, 1.0f ), 2.8f, std::make_shared< Attenuation >( 0, 0, 0.2 ) );
+    addToScene( affiliated_actor );
 
     // 主角视角
     MeshLoader main_actor( "monkey3.obj" );
@@ -104,8 +130,8 @@ void MainGame::init( GLManager* glManager )
     init_model();
 
     //
-    primary_camera  = main_actor.getEntity()->getComponent< PerspectiveCamera >();
-    primary_camera2 = affiliated_actor.getEntity()->getComponent< PerspectiveCamera >();
+    primary_camera = main_actor.getEntity()->getComponent< PerspectiveCamera >();
+    top_camera     = affiliated_actor->getComponent< OrthoCamera >();
 
     getEngine()->getGLManager()->setActiveCamera( primary_camera );
 }
@@ -127,7 +153,6 @@ void MainGame::init_model()
 }
 void MainGame::add_model( const std::string file, bool fromHttp, std::string extension )
 {
-    // auto       ml = make_shared< MeshLoader >( file, fromHttp, extension );
     MeshLoader* ml = new MeshLoader( file, fromHttp, extension );
 
     mesh_model mm;
@@ -135,7 +160,6 @@ void MainGame::add_model( const std::string file, bool fromHttp, std::string ext
     mm._meshcache_tag = "/temp/" + file + "/" + file + "." + extension;
     mm._ml            = ml;
     _model_array.push_back( mm );
-    // _model_gather[ mm._tag ].push_back( mm );
 }
 
 void MainGame::create_model()
@@ -150,22 +174,5 @@ void MainGame::create_model()
             _model_array[ i ]._ml->getEntity()->addComponent< SphereCollider >( 1, 1 );
             addToScene( _model_array[ i ]._ml->getEntity() );
         }
-
-        // for ( auto models = _model_gather.begin(); models != _model_gather.end(); ++i )
-        // {
-        //     // debug( "models : -> %s", models->first.c_str() );
-        //     for ( auto model : _model_gather[ models->first ] )
-        //     {
-        //         if ( ( model._ml->is_created != true ) && ( model._ml->is_load == true ) )
-        //         {
-        //             //
-        //             model._ml->is_created = true;
-        //             model._ml->entity_creat( model._tag, model._meshcache_tag, true );
-        //             model._ml->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 0 ) );
-        //             model._ml->getEntity()->addComponent< SphereCollider >( 1, 1 );
-        //             addToScene( model._ml->getEntity() );
-        //         }
-        //     }
-        // }
     }
 }

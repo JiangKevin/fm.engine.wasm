@@ -39,7 +39,8 @@ public:
     std::shared_ptr< OrthoCamera >       top_camera;
     bool                                 topOrFront = false;
     std::shared_ptr< Entity >            affiliated_actor;
-    float                                m_top_lar_velocity, m_top_uad_velocity;
+    float                                m_top_lar_velocity, m_top_uad_velocity, m_top_pam_velocity=3;
+    bool                                 is_zoom = false;
 public:
     std::vector< mesh_model > _model_array;
     void                      init_model();

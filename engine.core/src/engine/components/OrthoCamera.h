@@ -17,6 +17,8 @@ public:
 
   inline virtual const char *getType(void) { return "ORTHO_CAMERA"; }
 
+  void zoom(float scale);
+
 private:
   float m_scale, m_aspect, m_zNear, m_zFar;
 };

@@ -28,6 +28,10 @@ void MainGame::update( Input* input, std::chrono::microseconds delta )
     {
         affiliated_actor->getTransform().translate( glm::rotate( affiliated_actor->getTransform().getRotation(), glm::vec3( 0.0f, m_top_uad_velocity, 0.0f ) ) );
     }
+    if ( is_zoom )
+    {
+        top_camera->zoom( m_top_pam_velocity );
+    }
 }
 
 void MainGame::init( GLManager* glManager )
@@ -42,6 +46,8 @@ void MainGame::init( GLManager* glManager )
 
     input->registerKeysToAxis( SDLK_KP_4, SDLK_KP_6, -1.f, 1.f, "top_leftAndRight" );
     input->registerKeysToAxis( SDLK_KP_2, SDLK_KP_8, -1.f, 1.f, "top_upAndDown" );
+    input->registerKeyToAction( SDLK_KP_PLUS, "zoom_plus" );
+    input->registerKeyToAction( SDLK_KP_MINUS, "zoom_minus" );
     //
     input->bindAction( "fire", IE_PRESSED,
                        [ this ]()
@@ -63,7 +69,6 @@ void MainGame::init( GLManager* glManager )
     input->bindAxis( "top_leftAndRight",
                      [ this ]( float value )
                      {
-                         debug( "adsfadsf %f", value );
                          m_top_lar_velocity = value;
                      } );
     input->bindAxis( "top_upAndDown",
@@ -71,6 +76,30 @@ void MainGame::init( GLManager* glManager )
                      {
                          m_top_uad_velocity = value;
                      } );
+
+    input->bindAction( "zoom_plus", IE_PRESSED,
+                       [ this ]()
+                       {
+                           if ( m_top_pam_velocity > 1 )
+                           {
+                               is_zoom = true;
+                               m_top_pam_velocity += 1.0f;
+                           }
+                       } );
+    input->bindAction( "zoom_minus", IE_PRESSED,
+                       [ this ]()
+                       {
+                           if ( m_top_pam_velocity > 1 )
+                           {
+                               is_zoom = true;
+                               m_top_pam_velocity -= 1.0f;
+                           }
+                       } );
+    input->bindAction( "zoom_minus", IE_RELEASED,
+                       [ this ]()
+                       {
+                           is_zoom = false;
+                       } );
     //
     auto brickMat  = std::make_shared< Material >( std::make_shared< Texture >( Asset( "bricks2.jpg" ) ), std::make_shared< Texture >( Asset( "bricks2_normal.jpg" ) ), std::make_shared< Texture >( Asset( "bricks2_specular.png" ) ) );
     auto planeMesh = Plane::getMesh();

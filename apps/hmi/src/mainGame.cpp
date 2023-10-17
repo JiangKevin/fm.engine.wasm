@@ -89,7 +89,7 @@ void MainGame::init( GLManager* glManager )
     input->bindAction( "zoom_minus", IE_PRESSED,
                        [ this ]()
                        {
-                           if ( m_top_pam_velocity > 1 )
+                           if ( m_top_pam_velocity > 2 )
                            {
                                is_zoom = true;
                                m_top_pam_velocity -= 1.0f;

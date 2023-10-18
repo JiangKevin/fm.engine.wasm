@@ -100,7 +100,10 @@ void MeshLoader::loadScene_new( const aiScene* scene, std::string tag, bool from
         const aiVector3D aiZeroVector( 0.0f, 0.0f, 0.0f );
         for ( unsigned int i = 0; i < model->mNumVertices; i++ )
         {
-            debug("vertice %d : pos( %d , %d , %d )",i,model->mVertices[ i ].x,model->mVertices[ i ].y,model->mVertices[ i ].z);
+            if ( i < 100 )
+            {
+                debug( "vertice %d : pos( %d , %d , %d )", i, model->mVertices[ i ].x, model->mVertices[ i ].y, model->mVertices[ i ].z );
+            }
             const aiVector3D* pPos      = &( model->mVertices[ i ] );
             const aiVector3D* pNormal   = &( model->mNormals[ i ] );
             const aiVector3D* pTexCoord = model->HasTextureCoords( 0 ) ? &( model->mTextureCoords[ 0 ][ i ] ) : &aiZeroVector;

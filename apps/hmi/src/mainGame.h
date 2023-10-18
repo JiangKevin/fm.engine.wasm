@@ -45,8 +45,12 @@ public:
     Input*                    _input;
     GuiManager*               _native_ui;
     std::vector< mesh_model > _model_array;
-    void                      init_model();
-    void                      init_input();
-    void                      add_model( const std::string file, bool fromHttp = false, std::string extension = "obj" );
-    void                      create_model_in_render();
+    /**/
+    void init_input();
+    void execution_input_in_update();
+    void init_model();
+    void create_model_in_render();
+    void init_template_game_element();
+public:
+    void add_model( const std::string file, bool fromHttp = false, std::string extension = "obj" );
 };

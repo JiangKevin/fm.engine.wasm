@@ -58,7 +58,7 @@ Window::Window( void )
         flags |= SDL_WINDOW_FULLSCREEN;
     }
 
-    m_window = SDL_CreateWindow( "Engine!", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, mode.w, mode.h, flags );
+    m_window = SDL_CreateWindow( "Fm Engine!", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, mode.w, mode.h, flags );
     if ( m_window == nullptr )
     {
         log_err( "SDL_CreateWindow error: %s", SDL_GetError() );

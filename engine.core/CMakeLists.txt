@@ -33,6 +33,9 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 LINK_DIRECTORIES(${CMAKE_BINARY_DIR}/lib)
 
+
+# 
+add_definitions(-DASSIMP_BUILD_DEBUG)
 add_subdirectory(dependencies)
 
 set(SDL2_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/dependencies/SDL/include)
@@ -70,6 +73,7 @@ IF(EMSCRIPTEN)
 
   # 控制debug log 显示与否
   add_definitions(-DDEBUG)
+
 
   #
   set(ENGINE_LIBS

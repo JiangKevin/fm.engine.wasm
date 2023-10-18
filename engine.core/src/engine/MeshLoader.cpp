@@ -23,7 +23,7 @@ using namespace uuid;
 // TODO: need to come back and refactor this, make it load on a seperate thread.
 std::map< std::string, std::vector< MeshRendererData > > MeshLoader::sceneMeshRendererDataCache;
 
-MeshLoader::MeshLoader( const std::string file, bool fromHttp, std::string extension )
+MeshLoader::MeshLoader( const std::string file, bool fromHttp, std::string extension, int optimizeFlags )
 {
     /**/
     // game_ptr = gamePtr;
@@ -42,10 +42,14 @@ MeshLoader::MeshLoader( const std::string file, bool fromHttp, std::string exten
     // 验证来源
     if ( fromHttp == false )
     {
+        // int flags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace;
+        // debug( "optimizeFlags = %d", flags );
         debug( "Loading mesh: %s From fileSystem", file.c_str() );
         Assimp::Importer importer;
         importer.SetIOHandler( new CustomIOSystem() );
-        const aiScene* scene = importer.ReadFile( file, aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace );
+        debug( "++++++++++++++++++++++++++++++++++++++++++++++++++++++" );
+        const aiScene* scene = importer.ReadFile( file, optimizeFlags );
+        debug( "++++++++++++++++++++++++++++++++++++++++++++++++++++++" );
         //
         if ( ! scene )
         {
@@ -64,11 +68,12 @@ MeshLoader::MeshLoader( const std::string file, bool fromHttp, std::string exten
         auto importer = std::make_shared< Assimp::Importer >();
         auto bn_ptr   = std::make_shared< blob_node >();
         // bn_ptr->game_ptr        = game_ptr;
-        bn_ptr->ml_ptr          = this;
-        bn_ptr->url             = "./assets/" + file + ".zip";
-        bn_ptr->fileName        = file;
-        bn_ptr->importer        = importer;
-        bn_ptr->mould_file_type = "obj";
+        bn_ptr->ml_ptr              = this;
+        bn_ptr->url                 = "./assets/" + file + ".zip";
+        bn_ptr->fileName            = file;
+        bn_ptr->importer            = importer;
+        bn_ptr->mould_file_type     = extension;
+        bn_ptr->assimpOptimizeFlags = optimizeFlags;
         /**/
         fecthRequest* mRequest = new fecthRequest();
         mRequest->bn_ptr       = bn_ptr;
@@ -220,7 +225,7 @@ void MeshLoader::entity_creat( std::string tag, std::string meshcache_tag, bool 
     debug( "Tag: %s , %s", o_tag.c_str(), meshcache_tag.c_str() );
     if ( m_entity == nullptr )
     {
-        debug( "m_entity==nullptr" );
+        // debug( "m_entity==nullptr" );
         m_entity = std::make_shared< Entity >();
         m_entity->updateTag( o_tag );
     }

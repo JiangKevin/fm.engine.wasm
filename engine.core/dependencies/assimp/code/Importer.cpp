@@ -661,6 +661,7 @@ const aiScene* Importer::ReadFile( const char* _pFile, unsigned int pFlags )
                     }
                 }
             }
+
             // Put a proper error message if no suitable importer was found
             if ( ! imp )
             {
@@ -686,6 +687,9 @@ const aiScene* Importer::ReadFile( const char* _pFile, unsigned int pFlags )
         {
             ext = desc->mName;
         }
+
+        printf( "[IMPORTER DEBUG] Assimp Importer : %s \n", ext.c_str() );
+
         DefaultLogger::get()->info( "Found a matching importer for this file format: " + ext + "." );
         pimpl->mProgressHandler->UpdateFileRead( 0, fileSize );
 
@@ -693,8 +697,8 @@ const aiScene* Importer::ReadFile( const char* _pFile, unsigned int pFlags )
         {
             profiler->BeginRegion( "import" );
         }
-
         pimpl->mScene = imp->ReadFile( this, pFile, pimpl->mIOHandler );
+
         pimpl->mProgressHandler->UpdateFileRead( fileSize, fileSize );
 
         if ( profiler )

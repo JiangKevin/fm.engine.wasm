@@ -52,5 +52,5 @@ public:
     void create_model_in_render();
     void init_template_game_element();
 public:
-    void add_model( const std::string file, bool fromHttp = false, std::string extension = "obj" );
+    void add_model( const std::string file, bool fromHttp = false, std::string extension = "obj", int optimizeFlags = 8388681 );
 };

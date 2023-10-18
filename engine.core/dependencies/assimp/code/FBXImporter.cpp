@@ -44,149 +44,137 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #ifndef ASSIMP_BUILD_NO_FBX_IMPORTER
 
-#include <exception>
-#include <iterator>
+    #include "FBXImporter.h"
+    #include "FBXConverter.h"
+    #include "FBXDocument.h"
+    #include "FBXParser.h"
+    #include "FBXTokenizer.h"
+    #include "FBXUtil.h"
+    #include "MemoryIOWrapper.h"
+    #include "StreamReader.h"
+    #include <assimp/Importer.hpp>
+    #include <exception>
+    #include <iterator>
 
-#include "FBXImporter.h"
-
-#include "FBXTokenizer.h"
-#include "FBXParser.h"
-#include "FBXUtil.h"
-#include "FBXDocument.h"
-#include "FBXConverter.h"
-
-#include "StreamReader.h"
-#include "MemoryIOWrapper.h"
-#include <assimp/Importer.hpp>
-
-namespace Assimp {
-    template<> const std::string LogFunctions<FBXImporter>::log_prefix = "FBX: ";
+namespace Assimp
+{
+    template <> const std::string LogFunctions< FBXImporter >::log_prefix = "FBX: ";
 }
 
 using namespace Assimp;
 using namespace Assimp::Formatter;
 using namespace Assimp::FBX;
 
-namespace {
-static const aiImporterDesc desc = {
-    "Autodesk FBX Importer",
-    "",
-    "",
-    "",
-    aiImporterFlags_SupportTextFlavour,
-    0,
-    0,
-    0,
-    0,
-    "fbx"
-};
+namespace
+{
+    static const aiImporterDesc desc = { "Autodesk FBX Importer", "", "", "", aiImporterFlags_SupportTextFlavour, 0, 0, 0, 0, "fbx" };
 }
 
 // ------------------------------------------------------------------------------------------------
 // Constructor to be privately used by #Importer
-FBXImporter::FBXImporter()
-{
-}
+FBXImporter::FBXImporter() {}
 
 // ------------------------------------------------------------------------------------------------
 // Destructor, private as well
-FBXImporter::~FBXImporter()
-{
-}
+FBXImporter::~FBXImporter() {}
 
 // ------------------------------------------------------------------------------------------------
 // Returns whether the class can handle the format of the given file.
-bool FBXImporter::CanRead( const std::string& pFile, IOSystem* pIOHandler, bool checkSig) const
+bool FBXImporter::CanRead( const std::string& pFile, IOSystem* pIOHandler, bool checkSig ) const
 {
-    const std::string& extension = GetExtension(pFile);
-    if (extension == "fbx") {
+    const std::string& extension = GetExtension( pFile );
+    if ( extension == "fbx" )
+    {
         return true;
     }
 
-    else if ((!extension.length() || checkSig) && pIOHandler)   {
+    else if ( ( ! extension.length() || checkSig ) && pIOHandler )
+    {
         // at least ASCII-FBX files usually have a 'FBX' somewhere in their head
-        const char* tokens[] = {"fbx"};
-        return SearchFileHeaderForToken(pIOHandler,pFile,tokens,1);
+        const char* tokens[] = { "fbx" };
+        return SearchFileHeaderForToken( pIOHandler, pFile, tokens, 1 );
     }
     return false;
 }
 
 // ------------------------------------------------------------------------------------------------
 // List all extensions handled by this loader
-const aiImporterDesc* FBXImporter::GetInfo () const
+const aiImporterDesc* FBXImporter::GetInfo() const
 {
     return &desc;
 }
 
-
 // ------------------------------------------------------------------------------------------------
 // Setup configuration properties for the loader
-void FBXImporter::SetupProperties(const Importer* pImp)
+void FBXImporter::SetupProperties( const Importer* pImp )
 {
-    settings.readAllLayers = pImp->GetPropertyBool(AI_CONFIG_IMPORT_FBX_READ_ALL_GEOMETRY_LAYERS, true);
-    settings.readAllMaterials = pImp->GetPropertyBool(AI_CONFIG_IMPORT_FBX_READ_ALL_MATERIALS, false);
-    settings.readMaterials = pImp->GetPropertyBool(AI_CONFIG_IMPORT_FBX_READ_MATERIALS, true);
-    settings.readTextures = pImp->GetPropertyBool(AI_CONFIG_IMPORT_FBX_READ_TEXTURES, true);
-    settings.readCameras = pImp->GetPropertyBool(AI_CONFIG_IMPORT_FBX_READ_CAMERAS, true);
-    settings.readLights = pImp->GetPropertyBool(AI_CONFIG_IMPORT_FBX_READ_LIGHTS, true);
-    settings.readAnimations = pImp->GetPropertyBool(AI_CONFIG_IMPORT_FBX_READ_ANIMATIONS, true);
-    settings.strictMode = pImp->GetPropertyBool(AI_CONFIG_IMPORT_FBX_STRICT_MODE, false);
-    settings.preservePivots = pImp->GetPropertyBool(AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, true);
-    settings.optimizeEmptyAnimationCurves = pImp->GetPropertyBool(AI_CONFIG_IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES, true);
+    settings.readAllLayers                = pImp->GetPropertyBool( AI_CONFIG_IMPORT_FBX_READ_ALL_GEOMETRY_LAYERS, true );
+    settings.readAllMaterials             = pImp->GetPropertyBool( AI_CONFIG_IMPORT_FBX_READ_ALL_MATERIALS, false );
+    settings.readMaterials                = pImp->GetPropertyBool( AI_CONFIG_IMPORT_FBX_READ_MATERIALS, true );
+    settings.readTextures                 = pImp->GetPropertyBool( AI_CONFIG_IMPORT_FBX_READ_TEXTURES, true );
+    settings.readCameras                  = pImp->GetPropertyBool( AI_CONFIG_IMPORT_FBX_READ_CAMERAS, true );
+    settings.readLights                   = pImp->GetPropertyBool( AI_CONFIG_IMPORT_FBX_READ_LIGHTS, true );
+    settings.readAnimations               = pImp->GetPropertyBool( AI_CONFIG_IMPORT_FBX_READ_ANIMATIONS, true );
+    settings.strictMode                   = pImp->GetPropertyBool( AI_CONFIG_IMPORT_FBX_STRICT_MODE, false );
+    settings.preservePivots               = pImp->GetPropertyBool( AI_CONFIG_IMPORT_FBX_PRESERVE_PIVOTS, true );
+    settings.optimizeEmptyAnimationCurves = pImp->GetPropertyBool( AI_CONFIG_IMPORT_FBX_OPTIMIZE_EMPTY_ANIMATION_CURVES, true );
 }
-
 
 // ------------------------------------------------------------------------------------------------
 // Imports the given file into the given scene structure.
-void FBXImporter::InternReadFile( const std::string& pFile,
-    aiScene* pScene, IOSystem* pIOHandler)
+void FBXImporter::InternReadFile( const std::string& pFile, aiScene* pScene, IOSystem* pIOHandler )
 {
-    std::unique_ptr<IOStream> stream(pIOHandler->Open(pFile,"rb"));
-    if (!stream) {
-        ThrowException("Could not open file for reading");
-    }
 
+    std::unique_ptr< IOStream > stream( pIOHandler->Open( pFile, "rb" ) );
+    if ( ! stream )
+    {
+        ThrowException( "Could not open file for reading" );
+    }
     // read entire file into memory - no streaming for this, fbx
     // files can grow large, but the assimp output data structure
     // then becomes very large, too. Assimp doesn't support
     // streaming for its output data structures so the net win with
     // streaming input data would be very low.
-    std::vector<char> contents;
-    contents.resize(stream->FileSize()+1);
-    stream->Read( &*contents.begin(), 1, contents.size()-1 );
+    std::vector< char > contents;
+    contents.resize( stream->FileSize() + 1 );
+    stream->Read( &*contents.begin(), 1, contents.size() - 1 );
     contents[ contents.size() - 1 ] = 0;
-    const char* const begin = &*contents.begin();
-
+    const char* const begin         = &*contents.begin();
     // broadphase tokenizing pass in which we identify the core
     // syntax elements of FBX (brackets, commas, key:value mappings)
     TokenList tokens;
-    try {
 
+    try
+    {
         bool is_binary = false;
-        if (!strncmp(begin,"Kaydara FBX Binary",18)) {
+        if ( ! strncmp( begin, "Kaydara FBX Binary", 18 ) )
+        {
+            printf( "[IMPORTER DEBUG] Importer file: %s(%d) : %s \n", pFile.c_str(), contents.size(), begin );
             is_binary = true;
-            TokenizeBinary(tokens,begin,contents.size());
+            TokenizeBinary( tokens, begin, contents.size() );
         }
-        else {
-            Tokenize(tokens,begin);
+        else
+        {
+            Tokenize( tokens, begin );
         }
 
         // use this information to construct a very rudimentary
         // parse-tree representing the FBX scope structure
-        Parser parser(tokens, is_binary);
+        Parser parser( tokens, is_binary );
 
         // take the raw parse-tree and convert it to a FBX DOM
-        Document doc(parser,settings);
+        Document doc( parser, settings );
 
         // convert the FBX DOM to aiScene
-        ConvertToAssimpScene(pScene,doc);
+        ConvertToAssimpScene( pScene, doc );
 
-        std::for_each(tokens.begin(),tokens.end(),Util::delete_fun<Token>());
+        std::for_each( tokens.begin(), tokens.end(), Util::delete_fun< Token >() );
     }
-    catch(std::exception&) {
-        std::for_each(tokens.begin(),tokens.end(),Util::delete_fun<Token>());
+    catch ( std::exception& )
+    {
+        std::for_each( tokens.begin(), tokens.end(), Util::delete_fun< Token >() );
         throw;
     }
 }
 
-#endif // !ASSIMP_BUILD_NO_FBX_IMPORTER
+#endif  // !ASSIMP_BUILD_NO_FBX_IMPORTER

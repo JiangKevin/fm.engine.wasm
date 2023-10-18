@@ -9,11 +9,11 @@
 #include "Material.h"
 #include "Mesh.h"
 #include "Texture.h"
+#include <assimp/postprocess.h>
 #include <assimp/scene.h>
 #include <map>
 #include <string>
 #include <vector>
-
 struct MeshRendererData
 {
     std::shared_ptr< Mesh >     mesh;
@@ -23,7 +23,7 @@ struct MeshRendererData
 class MeshLoader
 {
 public:
-    MeshLoader( const std::string file, bool fromHttp = false,std::string extension = "obj" );
+    MeshLoader( const std::string file, bool fromHttp = false, std::string extension = "obj", int optimizeFlags = 8388681 /*aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace*/ );
     ~MeshLoader( void );
     std::shared_ptr< Entity > getEntity( void ) const;
     /**/
@@ -39,4 +39,5 @@ private:
     std::string                                                     m_fileName;
     std::shared_ptr< Entity >                                       m_entity;
     static std::map< std::string, std::vector< MeshRendererData > > sceneMeshRendererDataCache;
+    // int                                                             assim_optimizeFlags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace;
 };

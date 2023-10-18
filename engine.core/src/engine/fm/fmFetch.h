@@ -42,13 +42,8 @@ enum node_draw_type
 /**/
 struct blob_node
 {
-    // Game* game_ptr;
-    // Assimp::Importer* importer;
-
     std::shared_ptr< Assimp::Importer > importer;
     MeshLoader*                         ml_ptr;
-    // std::shared_ptr< MeshLoader >       ml_ptr;
-
     bool           isload              = false;
     node_draw_type draw_type           = DRAW_FACE;
     bool           isTexRepeat         = true;

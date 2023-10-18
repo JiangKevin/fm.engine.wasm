@@ -90,6 +90,7 @@ void MainGame::init_input()
                         } );
 }
 
+
 /**/
 void MainGame::add_model( const std::string file, bool fromHttp, std::string extension, int optimizeFlags )
 {

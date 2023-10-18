@@ -36,70 +36,8 @@ void MainGame::update( Input* input, std::chrono::microseconds delta )
 
 void MainGame::init( GLManager* glManager )
 {
-    // 隐藏原生ui
-    auto m_gui = getEngine()->getWindow()->getGuiManager();
-    m_gui->togglePropertyEditor();
-    // 获取输入
-    auto input = getEngine()->getWindow()->getInput();
-    input->registerKeyToAction( SDLK_SPACE, "fire" );
-    input->registerKeyToAction( SDLK_c, "swapCamera" );
-
-    input->registerKeysToAxis( SDLK_KP_4, SDLK_KP_6, -1.f, 1.f, "top_leftAndRight" );
-    input->registerKeysToAxis( SDLK_KP_2, SDLK_KP_8, -1.f, 1.f, "top_upAndDown" );
-    input->registerKeyToAction( SDLK_KP_PLUS, "zoom_plus" );
-    input->registerKeyToAction( SDLK_KP_MINUS, "zoom_minus" );
-    //
-    input->bindAction( "fire", IE_PRESSED,
-                       [ this ]()
-                       {
-                           MeshLoader cube( "cube.obj" );
-                           cube.entity_creat( "cube", "cube.obj" );
-                           cube.getEntity()->getTransform().setPosition( primary_camera->getParent()->getPosition() );
-                           cube.getEntity()->addComponent< BoxCollider >( glm::vec3( 0.5, 0.5, 0.5 ), 50 );
-                           addToScene( cube.getEntity() );
-                           auto dir = primary_camera->getParent()->getDirection();
-                           cube.getEntity()->getComponent< BoxCollider >()->applyCentralImpulse( glm::vec3( dir.x * 500.0f, dir.y * 500.0f, dir.z * 500.0f ) );
-                       } );
-
-    input->bindAction( "swapCamera", IE_PRESSED,
-                       [ this ]()
-                       {
-                           topOrFront = ! topOrFront;
-                       } );
-    input->bindAxis( "top_leftAndRight",
-                     [ this ]( float value )
-                     {
-                         m_top_lar_velocity = value;
-                     } );
-    input->bindAxis( "top_upAndDown",
-                     [ this ]( float value )
-                     {
-                         m_top_uad_velocity = value;
-                     } );
-
-    input->bindAction( "zoom_plus", IE_PRESSED,
-                       [ this ]()
-                       {
-                           if ( m_top_pam_velocity > 1 )
-                           {
-                               is_zoom = true;
-                               m_top_pam_velocity += 1.0f;
-                           }
-                       } );
-    input->bindAction( "zoom_minus", IE_PRESSED,
-                       [ this ]()
-                       {
-                           if ( m_top_pam_velocity > 2 )
-                           {
-                               is_zoom = true;
-                               m_top_pam_velocity -= 1.0f;
-                           }
-                       } );
-    input->bindAction( "zoom_minus", IE_RELEASED,
-                       [ this ]()
-                       {
-                           is_zoom = false;
-                       } );
+    /* 期初原生ui与input */
+    init_input();
     //
     auto brickMat  = std::make_shared< Material >( std::make_shared< Texture >( Asset( "bricks2.jpg" ) ), std::make_shared< Texture >( Asset( "bricks2_normal.jpg" ) ), std::make_shared< Texture >( Asset( "bricks2_specular.png" ) ) );
     auto planeMesh = Plane::getMesh();
@@ -157,7 +95,6 @@ void MainGame::init( GLManager* glManager )
     addToScene( main_actor.getEntity() );
     // 期初
     init_model();
-
     //
     primary_camera = main_actor.getEntity()->getComponent< PerspectiveCamera >();
     top_camera     = affiliated_actor->getComponent< OrthoCamera >();
@@ -168,40 +105,6 @@ void MainGame::init( GLManager* glManager )
 void MainGame::render( GLManager* glManager )
 {
     Game::render( glManager );
-    /**/
-    create_model();
-}
-
-void MainGame::init_model()
-{
-    add_model( "AncientUgandan", true, "obj" );
-    add_model( "AncientUgandan", true, "obj" );
-    add_model( "monkey", true, "obj" );
-    add_model( "AncientUgandan", true, "obj" );
-    add_model( "monkey", true, "obj" );
-}
-void MainGame::add_model( const std::string file, bool fromHttp, std::string extension )
-{
-    MeshLoader* ml = new MeshLoader( file, fromHttp, extension );
-
-    mesh_model mm;
-    mm._tag           = file + "-" + "HTTP-" + generate_uuid_v4();
-    mm._meshcache_tag = "/temp/" + file + "/" + file + "." + extension;
-    mm._ml            = ml;
-    _model_array.push_back( mm );
-}
-
-void MainGame::create_model()
-{
-    for ( int i = 0; i < _model_array.size(); i++ )
-    {
-        if ( ( _model_array[ i ]._ml->is_load == true ) && ( _model_array[ i ]._ml->is_created == false ) )
-        {
-            _model_array[ i ]._ml->is_created = true;
-            _model_array[ i ]._ml->entity_creat( _model_array[ i ]._tag, _model_array[ i ]._meshcache_tag, true );
-            _model_array[ i ]._ml->getEntity()->getTransform().setPosition( glm::vec3( 0, 0, 0 ) );
-            _model_array[ i ]._ml->getEntity()->addComponent< SphereCollider >( 1, 1 );
-            addToScene( _model_array[ i ]._ml->getEntity() );
-        }
-    }
+    /* from http 中的model构建 */
+    create_model_in_render();
 }

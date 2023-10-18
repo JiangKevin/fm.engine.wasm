@@ -39,11 +39,14 @@ public:
     std::shared_ptr< OrthoCamera >       top_camera;
     bool                                 topOrFront = false;
     std::shared_ptr< Entity >            affiliated_actor;
-    float                                m_top_lar_velocity, m_top_uad_velocity, m_top_pam_velocity=3;
+    float                                m_top_lar_velocity, m_top_uad_velocity, m_top_pam_velocity = 3;
     bool                                 is_zoom = false;
 public:
+    Input*                    _input;
+    GuiManager*               _native_ui;
     std::vector< mesh_model > _model_array;
     void                      init_model();
+    void                      init_input();
     void                      add_model( const std::string file, bool fromHttp = false, std::string extension = "obj" );
-    void                      create_model();
+    void                      create_model_in_render();
 };

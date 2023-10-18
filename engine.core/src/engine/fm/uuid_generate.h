@@ -1,6 +1,8 @@
 #include <random>
 #include <sstream>
-
+#include <iostream>
+using namespace std;
+/**/
 namespace uuid
 {
     static std::random_device              rd;

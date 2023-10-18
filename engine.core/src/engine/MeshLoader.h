@@ -28,6 +28,8 @@ public:
     std::shared_ptr< Entity > getEntity( void ) const;
     /**/
     void loadScene( const aiScene* scene, std::string tag = "", bool fromHttp = false, std::string extension = "obj", std::string mid_folder = "monkey" );
+    void loadScene_new( const aiScene* scene, std::string tag = "", bool fromHttp = false, std::string extension = "obj", std::string mid_folder = "monkey" );
+
     /**/
     void entity_creat( std::string tag, std::string meshcache_tag, bool fromHttp = false );
     /**/

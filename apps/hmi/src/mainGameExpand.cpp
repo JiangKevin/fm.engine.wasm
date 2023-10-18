@@ -11,14 +11,15 @@ using namespace std;
 /**/
 void MainGame::init_model()
 {
-    add_model( "AncientUgandan", true, "obj" );
-    add_model( "AncientUgandan", true, "obj" );
-    add_model( "monkey", true, "obj" );
-    add_model( "AncientUgandan", true, "obj" );
-    add_model( "monkey", true, "obj" );
+    int obj_flags = 0;
+    add_model( "AncientUgandan", true, "obj", obj_flags );
+    // add_model( "AncientUgandan", true, "obj" );
+    // add_model( "monkey", true, "obj" );
+    // add_model( "AncientUgandan", true, "obj" );
+    // add_model( "monkey", true, "obj" );
     //
     int fbx_flags = aiProcess_CalcTangentSpace | aiProcess_GenNormals | aiProcess_Triangulate | aiProcess_SortByPType;
-    add_model( "cgaxr", true, "fbx", fbx_flags );
+    // add_model( "cgaxr", true, "fbx", fbx_flags );
 }
 /**/
 void MainGame::init_input()

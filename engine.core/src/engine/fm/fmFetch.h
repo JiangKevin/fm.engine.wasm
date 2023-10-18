@@ -44,14 +44,14 @@ struct blob_node
 {
     std::shared_ptr< Assimp::Importer > importer;
     MeshLoader*                         ml_ptr;
-    bool           isload              = false;
-    node_draw_type draw_type           = DRAW_FACE;
-    bool           isTexRepeat         = true;
-    string         url                 = "AncientUgandan.obj";
-    string         fileName            = "monkey3";
-    string         mould_file_type     = "obj";
-    string         uuid                = "";
-    int            assimpOptimizeFlags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace;
+    bool                                isload              = false;
+    node_draw_type                      draw_type           = DRAW_FACE;
+    bool                                isTexRepeat         = true;
+    string                              url                 = "AncientUgandan.obj";
+    string                              fileName            = "monkey3";
+    string                              mould_file_type     = "obj";
+    string                              uuid                = "";
+    int                                 assimpOptimizeFlags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace;
 };
 /**/
 struct blob_image
@@ -144,7 +144,9 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
                 if ( user_data->bn_ptr->ml_ptr )
                 {
                     debug( "Reponse ml_ptl %u From http", user_data->bn_ptr->ml_ptr );
-                    user_data->bn_ptr->ml_ptr->loadScene( scene, model_file_name, true, user_data->bn_ptr->mould_file_type, user_data->bn_ptr->fileName.c_str() );
+                    // user_data->bn_ptr->ml_ptr->loadScene( scene, model_file_name, true, user_data->bn_ptr->mould_file_type, user_data->bn_ptr->fileName.c_str() );
+                    user_data->bn_ptr->ml_ptr->loadScene_new( scene, model_file_name, true, user_data->bn_ptr->mould_file_type, user_data->bn_ptr->fileName.c_str() );
+
                     user_data->bn_ptr->ml_ptr->is_load = true;
                 }
             }

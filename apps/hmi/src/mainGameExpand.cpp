@@ -18,7 +18,7 @@ void MainGame::init_model()
     add_model( "monkey", true, "obj" );
     //
     int fbx_flags = aiProcess_CalcTangentSpace | aiProcess_GenNormals | aiProcess_Triangulate | aiProcess_SortByPType;
-    add_model( "cgaxr", true, "fbx",fbx_flags);
+    add_model( "cgaxr", true, "fbx", fbx_flags );
 }
 /**/
 void MainGame::init_input()
@@ -92,7 +92,7 @@ void MainGame::init_input()
 /**/
 void MainGame::add_model( const std::string file, bool fromHttp, std::string extension, int optimizeFlags )
 {
-    MeshLoader* ml = new MeshLoader( file, fromHttp, extension,optimizeFlags );
+    MeshLoader* ml = new MeshLoader( file, fromHttp, extension, optimizeFlags );
 
     mesh_model mm;
     mm._tag           = file + "-" + "HTTP-" + generate_uuid_v4();

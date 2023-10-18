@@ -4,7 +4,6 @@
 
 #include "MeshLoader.h"
 #include "CustomIOSystem.h"
-#include "FBXImporter.h"
 #include "Logger.h"
 #include "components/MeshRenderer.h"
 #include "fm/fmFetch.h"
@@ -47,9 +46,7 @@ MeshLoader::MeshLoader( const std::string file, bool fromHttp, std::string exten
         debug( "Loading mesh: %s From fileSystem", file.c_str() );
         Assimp::Importer importer;
         importer.SetIOHandler( new CustomIOSystem() );
-        debug( "++++++++++++++++++++++++++++++++++++++++++++++++++++++" );
         const aiScene* scene = importer.ReadFile( file, optimizeFlags );
-        debug( "++++++++++++++++++++++++++++++++++++++++++++++++++++++" );
         //
         if ( ! scene )
         {

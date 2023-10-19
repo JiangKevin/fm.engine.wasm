@@ -89,6 +89,7 @@ std::shared_ptr< Entity > MeshLoader::getEntity( void ) const
 void MeshLoader::loadScene_new( const aiScene* scene, std::string tag, bool fromHttp, std::string extension, std::string mid_folder )
 {
     debug( "Mid_folder: %s ", mid_folder.c_str() );
+    debug( "Scene counts ( mNumMeshes: %d mNumLights: %d mNumCameras: %d mNumMaterials: %d mNumSkeletons: %d mNumTextures: %d )", scene->mNumMeshes, scene->mNumLights, scene->mNumCameras, scene->mNumMaterials, scene->mNumSkeletons, scene->mNumTextures );
 
     //
     for ( int i = 0; i < scene->mNumMeshes; i++ )
@@ -97,41 +98,80 @@ void MeshLoader::loadScene_new( const aiScene* scene, std::string tag, bool from
         std::vector< Vertex >       vertices;
         std::vector< unsigned int > indices;
 
+        /* 获取点 */
         const aiVector3D aiZeroVector( 0.0f, 0.0f, 0.0f );
-        for ( unsigned int i = 0; i < model->mNumVertices; i++ )
+        for ( unsigned int j = 0; j < model->mNumVertices; j++ )
         {
-            if ( i < 100 )
-            {
-                debug( "vertice %d : pos( %d , %d , %d )", i, model->mVertices[ i ].x, model->mVertices[ i ].y, model->mVertices[ i ].z );
-            }
-            const aiVector3D* pPos      = &( model->mVertices[ i ] );
-            const aiVector3D* pNormal   = &( model->mNormals[ i ] );
-            const aiVector3D* pTexCoord = model->HasTextureCoords( 0 ) ? &( model->mTextureCoords[ 0 ][ i ] ) : &aiZeroVector;
-            const aiVector3D* pTangent  = model->HasTangentsAndBitangents() ? &( model->mTangents[ i ] ) : &aiZeroVector;
+            const aiVector3D* pPos      = &( model->mVertices[ j ] );
+            const aiVector3D* pNormal   = &( model->mNormals[ j ] );
+            const aiVector3D* pTexCoord = model->HasTextureCoords( 0 ) ? &( model->mTextureCoords[ 0 ][ j ] ) : &aiZeroVector;
+            const aiVector3D* pTangent  = model->HasTangentsAndBitangents() ? &( model->mTangents[ j ] ) : &aiZeroVector;
 
             Vertex vert( glm::vec3( pPos->x, pPos->y, pPos->z ), glm::vec2( pTexCoord->x, pTexCoord->y ), glm::vec3( pNormal->x, pNormal->y, pNormal->z ), glm::vec3( pTangent->x, pTangent->y, pTangent->z ) );
 
             vertices.push_back( vert );
         }
-
-        for ( unsigned int i = 0; i < model->mNumFaces; i++ )
+        /* 获取面 */
+        for ( unsigned int j = 0; j < model->mNumFaces; j++ )
         {
-            const aiFace& face = model->mFaces[ i ];
+            const aiFace& face = model->mFaces[ j ];
             indices.push_back( face.mIndices[ 0 ] );
             indices.push_back( face.mIndices[ 1 ] );
             indices.push_back( face.mIndices[ 2 ] );
         }
-
+        /**/
         const aiMaterial* pMaterial = scene->mMaterials[ model->mMaterialIndex ];
-        debug( "Tex num: %s : %i", tag.c_str(), model->mMaterialIndex );
+        debug( "Tex NO: %s : %i", tag.c_str(), model->mMaterialIndex );
         /**/
         std::shared_ptr< Texture > diffuseMap;
         std::shared_ptr< Texture > normalMap;
         std::shared_ptr< Texture > specularMap;
         aiString                   Path;
         char                       new_path[ 2048 ] = "";
+        /**************************************************************/
         /**/
-        //
+        aiColor4D tcolor;
+        if ( AI_SUCCESS == aiGetMaterialColor( pMaterial, AI_MATKEY_COLOR_DIFFUSE, &tcolor ) )
+        {
+            debug( "AI_MATKEY_COLOR_DIFFUSE\t ( %f , %f , %f , %f )", tcolor.r, tcolor.g, tcolor.b, tcolor.a );
+        }
+        if ( AI_SUCCESS == aiGetMaterialColor( pMaterial, AI_MATKEY_COLOR_SPECULAR, &tcolor ) )
+        {
+            debug( "AI_MATKEY_COLOR_SPECULAR\t ( %f , %f , %f , %f )", tcolor.r, tcolor.g, tcolor.b, tcolor.a );
+        }
+        if ( AI_SUCCESS == aiGetMaterialColor( pMaterial, AI_MATKEY_COLOR_AMBIENT, &tcolor ) )
+        {
+            debug( "AI_MATKEY_COLOR_AMBIENT\t ( %f , %f , %f , %f )", tcolor.r, tcolor.g, tcolor.b, tcolor.a );
+        }
+        if ( AI_SUCCESS == aiGetMaterialColor( pMaterial, AI_MATKEY_COLOR_EMISSIVE, &tcolor ) )
+        {
+            debug( "AI_MATKEY_COLOR_EMISSIVE\t ( %f , %f , %f , %f )", tcolor.r, tcolor.g, tcolor.b, tcolor.a );
+        }
+        /**/
+        float shininess;
+        if ( AI_SUCCESS == aiGetMaterialFloat( pMaterial, AI_MATKEY_SHININESS, &shininess ) )
+        {
+            debug( "Shininess ( %f )", shininess );
+        }
+        /**/
+        int blendMode;
+        if ( AI_SUCCESS == aiGetMaterialInteger( pMaterial, AI_MATKEY_BLEND_FUNC, &blendMode ) )
+        {
+            debug( "BlendMode ( %d )", blendMode );
+        }
+        /* Culling */
+        unsigned int max       = 1;
+        int          two_sided = 0;
+        if ( ( AI_SUCCESS == aiGetMaterialIntegerArray( pMaterial, AI_MATKEY_TWOSIDED, &two_sided, &max ) ) && two_sided )
+        {
+            debug( "Two sided ( %d ) max ( %d ) :YES", two_sided, max );
+        }
+        else
+        {
+            debug( "Two sided ( %d ) max ( %d ) :NO", two_sided, max );
+        }
+        /**/
+        /**************************************************************/
         if ( pMaterial->GetTextureCount( aiTextureType_DIFFUSE ) > 0 && pMaterial->GetTexture( aiTextureType_DIFFUSE, 0, &Path, NULL, NULL, NULL, NULL, NULL ) == AI_SUCCESS )
         {
             if ( fromHttp == false )  // From filesystem
@@ -148,7 +188,7 @@ void MeshLoader::loadScene_new( const aiScene* scene, std::string tag, bool from
         }
         else
         {
-            debug( "DiffuseMap tex path: %s for default", Path.data );
+            debug( "DiffuseMap tex path: %s for default", "default_normal.jpg" );
             diffuseMap = std::make_shared< Texture >( Asset( "default_normal.jpg" ) );
         }
         /**/
@@ -168,7 +208,7 @@ void MeshLoader::loadScene_new( const aiScene* scene, std::string tag, bool from
         }
         else
         {
-            debug( "NormalMap tex path: %s for default", Path.data );
+            debug( "NormalMap tex path: %s for default", "default_normal.jpg" );
             normalMap = std::make_shared< Texture >( Asset( "default_normal.jpg" ) );
         }
         /**/
@@ -188,7 +228,7 @@ void MeshLoader::loadScene_new( const aiScene* scene, std::string tag, bool from
         }
         else
         {
-            debug( "SpecularMap tex path: %s for default", Path.data );
+            debug( "SpecularMap tex path: %s for default", "default_specular.jpg" );
             specularMap = std::make_shared< Texture >( Asset( "default_specular.jpg" ) );
         }
         //

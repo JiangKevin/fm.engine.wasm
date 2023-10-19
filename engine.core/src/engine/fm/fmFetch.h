@@ -128,7 +128,7 @@ void downloadSucceeded( emscripten_fetch_t* fetch )
             }
             else
             {
-                debug( "Unzip file(%s) is noe ok !!!!", model_file_name );
+                debug( "Unzip file(%s) is no ok !!!!", model_file_name );
             }
             //
             const aiScene* scene = user_data->bn_ptr->importer->ReadFile( model_file_name, user_data->bn_ptr->assimpOptimizeFlags );

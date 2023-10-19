@@ -14,16 +14,16 @@ void MainGame::init_model()
     // int obj_flags = aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices | aiProcess_MakeLeftHanded | aiProcess_Triangulate | aiProcess_RemoveComponent | aiProcess_GenNormals | aiProcess_SplitLargeMeshes \
     // | aiProcess_PreTransformVertices | aiProcess_LimitBoneWeights | aiProcess_ValidateDataStructure | aiProcess_ImproveCacheLocality | aiProcess_SortByPType | aiProcess_GenUVCoords | aiProcess_TransformUVCoords \
     // | aiProcess_FlipUVs | aiProcess_GlobalScale | aiProcess_ForceGenNormals;
+    int fbx_flags = aiProcess_CalcTangentSpace | aiProcess_GenNormals | aiProcess_Triangulate | aiProcess_SortByPType | aiProcess_FlipUVs | aiProcess_GenUVCoords | aiProcess_TransformUVCoords;
+    add_model( "cgaxr", true, "obj", fbx_flags );
 
     int obj_flags = aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_FlipUVs | aiProcess_CalcTangentSpace;
-    add_model( "AncientUgandan", true, "obj", obj_flags );
-    add_model( "AncientUgandan", true, "obj" );
-    add_model( "monkey", true, "obj" );
-    add_model( "AncientUgandan", true, "obj" );
-    add_model( "monkey", true, "obj" );
+    // add_model( "AncientUgandan", true, "obj", obj_flags );
+    // add_model( "AncientUgandan", true, "obj" );
+    // add_model( "monkey", true, "obj" );
+    // add_model( "AncientUgandan", true, "obj" );
+    // add_model( "monkey", true, "obj" );
     //
-    int fbx_flags = aiProcess_CalcTangentSpace | aiProcess_GenNormals | aiProcess_Triangulate | aiProcess_SortByPType;
-    add_model( "cgaxr", true, "fbx", fbx_flags );
 }
 /**/
 void MainGame::init_input()
